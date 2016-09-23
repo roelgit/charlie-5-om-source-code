@@ -1,10 +1,4 @@
 # Ignore executables
-.exe
-.dll
-
-# VS Program debug database
-.pdb
-
-*.json
+*.exe
 *.dll
 *.pdb
