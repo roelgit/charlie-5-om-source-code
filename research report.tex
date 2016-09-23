@@ -1,0 +1,23 @@
+\documentclass[a4paper,12pt,twoside]{article}
+\usepackage[english]{babel}
+
+\begin{document}
+\title{Force Directed Graph Drawing algorithms}
+\author{Group Charlie-5: Jeroen Hoegen Dijkhof, Roxanne Giling, Laurens Post, Roel Schipper}
+\newpage
+\tableofcontents
+\newpage
+\section{Introduction}\label{s:Introduction}
+Force-directed graph drawing has been one of the most flexible and widely used algorithms out there since 1963 with one of the first versions being that of ~Tutte~\cite{Tutte}. These algorithms are used to represent graphs so that they are pleasing to look at. This is done by spacing out the vertices from each-other so that they are clearly visible as seperate nodes, but they are also not too spaced out to avoid the resulting image being too big. The algorithms are based on the idea of springs or magnets in that each node has both a repulsive as well as an attractive force pulling and pushing on them. Ideally, this makes two nodes spaced out in such a way that these two forces hang in balance with each-other. As a graph grows in size, so does its complexity. Lines may cross with one-another or connected nodes may find themselves stretched out on either side of the initial graph. In our research we have found several different versions in order to handle this increase in complexity, each with their own ideas on how to compute these two forces. Tutte as mentioned above uses a graph's barycentric representation while others, such as that of Kamada and ~Kawai~\cite{Kawai}, use the theoretic distances of paths in the graph from one node to another in order to compute their spring forces.
+\section{Technical chapter}
+First, some technical terms that we'll be using throughout the rest of this paper...
+\section{Main text}
+Zhu Li, we did the thing!
+\section{Conclusions}
+These are our conclusions based on the results we found.
+\begin{thebibliography}{99}
+\bibitem{Tutte}William T. Tutte. \emph{How to draw a graph.} Proc. London Math. Society, 13(52):743–768, 1963
+\bibitem{Kawai}T. Kamada and S. Kawai. \emph{An algorithm for drawing general undirected graphs.} Inform. Process. Lett., 31:7–15, 1989.
+\end{thebibliography}
+
+\end{document}
