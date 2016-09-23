@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Station Data Converter": {
+      "commandName": "Project",
+      "commandLineArgs": "spoorkaart.json nodes.txt"
+    }
+  }
+}
