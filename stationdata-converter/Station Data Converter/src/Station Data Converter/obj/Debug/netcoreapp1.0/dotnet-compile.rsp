@@ -89,6 +89,9 @@
 --reference:C:\Users\Jeroen\.nuget\packages\System.Xml.ReaderWriter\4.0.11\ref\netstandard1.3\System.Xml.ReaderWriter.dll
 --reference:C:\Users\Jeroen\.nuget\packages\System.Xml.XDocument\4.0.11\ref\netstandard1.3\System.Xml.XDocument.dll
 C:\Users\Jeroen\Documents\Visual Studio 2015\Projects\charlie-5-om-source-code\stationdata-converter\Station Data Converter\src\Station Data Converter\Program.cs
+C:\Users\Jeroen\Documents\Visual Studio 2015\Projects\charlie-5-om-source-code\stationdata-converter\Station Data Converter\src\Station Data Converter\Station.cs
+C:\Users\Jeroen\Documents\Visual Studio 2015\Projects\charlie-5-om-source-code\stationdata-converter\Station Data Converter\src\Station Data Converter\objects\CoordinateJsonConverter.cs
+C:\Users\Jeroen\Documents\Visual Studio 2015\Projects\charlie-5-om-source-code\stationdata-converter\Station Data Converter\src\Station Data Converter\objects\DataFile.cs
 C:\Users\Jeroen\Documents\Visual Studio 2015\Projects\charlie-5-om-source-code\stationdata-converter\Station Data Converter\src\Station Data Converter\objects\Geometry.cs
 C:\Users\Jeroen\Documents\Visual Studio 2015\Projects\charlie-5-om-source-code\stationdata-converter\Station Data Converter\src\Station Data Converter\objects\Item.cs
 C:\Users\Jeroen\Documents\Visual Studio 2015\Projects\charlie-5-om-source-code\stationdata-converter\Station Data Converter\src\Station Data Converter\objects\Properties.cs
