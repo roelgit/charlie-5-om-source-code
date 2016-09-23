@@ -5,3 +5,6 @@
 # VS Program debug database
 .pdb
 
+*.json
+*.dll
+*.pdb
