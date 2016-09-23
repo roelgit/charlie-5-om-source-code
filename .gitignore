@@ -1,0 +1,7 @@
+# Ignore executables
+.exe
+.dll
+
+# VS Program debug database
+.pdb
+
