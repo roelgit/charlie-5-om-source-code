@@ -72,14 +72,38 @@
 \begin{frame}
     \frametitle{Testdata}
     \begin{itemize}
-        \item{Internet routes}
-        \item{}
+        \item{Internet routing table}
+        \begin{itemize}
+            \item{Internet is een graaf!}
+        \end{itemize}
+        \item{Gegenereerde data}
+        \begin{itemize}
+            \item{Per hypothese te genereren}
+            \item{Bijvoorbeeld veel edges per vertex}
+        \end{itemize}
     \end{itemize}
 \end{frame}
 
 \begin{frame}
+    \frametitle{Zaken die we niet behandelen}
+    \begin{itemize}
+        \item{Andere algoritmes}
+        \begin{itemize}
+            \item{Barycentrisch}
+            \item{Geoptimaliseerde algoritmes voor grote grafen}
+        \end{itemize}
+        \item{Bipartiet / niet-partitiete grafen}
+        \item{Spoorkaart}
+        \begin{itemize}
+            \item{Wilden we doen, maar data is lastig te verkrijgen}
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
     \frametitle{Vragen}
-    U kunt nu vragen stellen als u die heeft.
+    Bedankt voor uw aandacht. U kunt nu vragen stellen als u die heeft.
 \end{frame}
 
 \end{document}
