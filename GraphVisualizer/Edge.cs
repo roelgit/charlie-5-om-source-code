@@ -34,5 +34,13 @@ namespace GraphVisualizer
         {
             return representation.GetHashCode();
         }
+
+        public float Length
+        {
+            get
+            {
+                return 0;
+            }
+        }
     }
 }

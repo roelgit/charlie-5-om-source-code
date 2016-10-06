@@ -32,6 +32,36 @@ namespace GraphVisualizer
             // todo: check if nodes exist
         }
 
+        public Node[] neigbours(Node n)
+        {
+            List<Node> tmp = new List<Node>();
+            foreach (Edge e in edges)
+            {
+                if (e.left == n)
+                {
+                    tmp.Add(e.right);
+                }
+                else if (e.right == n)
+                {
+                    tmp.Add(e.left);
+                }
+            }
+            return tmp.ToArray();
+        }
+
+        public Edge[] node_edges(Node n)
+        {
+            List<Edge> tmp = new List<Edge>();
+            foreach (Edge e in edges)
+            {
+                if (e.left == n || e.right == n)
+                {
+                    tmp.Add(e);
+                }
+            }
+            return tmp.ToArray();
+        }
+
         // call this method when you are done adding nodes and edges.
         // it will turn the temporary data into a more efficient one
         public void finalize()
