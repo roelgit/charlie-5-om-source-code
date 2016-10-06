@@ -15,10 +15,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin posuere leo sed e
 \newpage
 
 \section{Introduction}\label{s:Introduction}
-Force-directed graph drawing has been one of the most flexible and widely used algorithms out there since 1963 with one of the first versions being that of ~Tutte~\cite{Tutte}. These algorithms are used to represent graphs so that they are pleasing to look at. This is done by spacing out the vertices from each-other so that they are clearly visible as seperate nodes, but they are also not too spaced out to avoid the resulting image being too big. The algorithms are based on the idea of springs or magnets in that each node has both a repulsive as well as an attractive force pulling and pushing on them. Ideally, this makes two nodes spaced out in such a way that these two forces hang in balance with each-other. As a graph grows in size, so does its complexity. Lines may cross with one-another or connected nodes may find themselves stretched out on either side of the initial graph. In our research we have found several different versions in order to handle this increase in complexity, each with their own ideas on how to compute these two forces. Tutte as mentioned above uses a graph's barycentric representation while others, such as that of Kamada and ~Kawai~\cite{Kawai}, use the theoretic distances of paths in the graph from one node to another in order to compute their spring forces.
+Force-directed graph drawing has been one of the most flexible and widely used algorithms out there since 1963 with one of the first versions being that of ~Tutte~\cite{Tutte}. These algorithms are used to represent graphs so that they are pleasing to look at. This is done by spacing out the vertices from each-other so that they are clearly visible as separate nodes, but they are also not too spaced out to avoid the resulting image being too big. The algorithms are based on the idea of springs or magnets in that each node has both a repulsive as well as an attractive force pulling and pushing on them. Ideally, this makes two nodes spaced out in such a way that these two forces hang in balance with each-other. As a graph grows in size, so does its complexity. Lines may cross with one-another or connected nodes may find themselves stretched out on either side of the initial graph. In our research we have found several different versions in order to handle this increase in complexity, each with their own ideas on how to compute these two forces. Tutte as mentioned above uses a graph's Barycentric representation while others, such as that of Kamada and ~Kawai~\cite{Kawai}, use the theoretic distances of paths in the graph from one node to another in order to compute their spring forces.
 
 \section{Description of the research}
-draft
+This research is focused about the use of graph drawing algorithms, especially the force-directed methods. Various methods have been researched to give a graphical presentation of a graph \cite{Ioannis G Tollis}. Other graph drawing methods such as the orthogonal and tree layouts are beyond our research scope. We intend to discover the influences of certain variables, parameters and details when using force-directed graph drawing algorithms. This with the purpose to get the “best” visual graphical representation of a given graph. During our research we wanted to find out what makes a graph drawing the best and how can this be measured.\newline
+There have been carried out several studies which looked at the aspects of how can a graph drawing and the human understanding of a drawn graph be measured \cite{Purchase}. There are certain aesthetic qualities such as the symmetry, number of edge crosses and bends that affect the intelligibility of a graph drawing. During our research we have used a few force-directed graph drawing algorithms combined with various parameters and settings, to find the effect of those parameters on the graphical output of a graph.
 
 \section{Description of the experiments}
 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -38,8 +39,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit.\subsection{Difficulties
 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
 \begin{thebibliography}{99}
-\bibitem{Tutte}William T. Tutte. \emph{How to draw a graph.} Proc. London Math. Society, 13(52):743–768, 1963
+\bibitem{Tutte}William T. Tutte. \emph{How to draw a graph.} Proc. London Math. Society, 13(52):743–768, 1963.
 \bibitem{Kawai}T. Kamada and S. Kawai. \emph{An algorithm for drawing general undirected graphs.} Inform. Process. Lett., 31:7–15, 1989.
+\bibitem{Ioannis G Tollis}G. Di Battista, P. Eades, R. Tamassia and I. G Tolli.s \emph{Algorithms for drawing graphs: an annotated bibliography.} Computational Geometry 4 235-282, 1994.
+\bibitem{Purchase}H.C. Purchase, R.F. Cohen and M.I. James. \emph{An Experimental Study of the Basis for Graph Drawing Algorithms.} Springer, Lecture Notes in Computer Science (no. 1027), 1995.
 \end{thebibliography}
 
 \end{document}
