@@ -23,9 +23,18 @@ namespace GraphVisualizer
             Algorithm a = new SimpleAlgorithm(c_1, c_2, c_3, c_4);
 
             // Todo: instrument this call
-            a.run(g);
+            //a.run(g);
 
+            //Visualizer.visualize(g, outputFile);
+
+            a.start(g);
             Visualizer.visualize(g, outputFile);
+            for (int i = 0; i < 5; i++)
+            {
+                System.Console.WriteLine("-------------");
+                a.run(g);
+                Visualizer.visualize(g, outputFile);
+            }
             System.Console.ReadKey();
         }
     }

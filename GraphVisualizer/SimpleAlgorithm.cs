@@ -31,6 +31,7 @@ namespace GraphVisualizer
 
         public override void start(Graph g)
         {
+            g.finalize();
             Random rnd = new Random();
             foreach (Node n in g.nodes)
             {

@@ -18,7 +18,7 @@ namespace GraphVisualizer
         // run the entire algorithm
         public void run(Graph g)
         {
-            g.finalize();
+            start(g);
             bool terminated = false;
             while (!terminated)
             {
