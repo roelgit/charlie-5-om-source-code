@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TestInput.cs" />
     <Compile Include="ASInput.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="Graph.cs" />

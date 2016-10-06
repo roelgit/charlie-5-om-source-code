@@ -10,32 +10,34 @@ namespace GraphVisualizer
     {
         public static void visualize(Graph g, string path)
         {
-            foreach (Node n in g.nodes)
-            {
-                drawNode(n);
-            }
-
             foreach (Edge e in g.edges)
             {
                 drawEdge(e);
+            }
+
+            foreach (Node n in g.nodes)
+            {
+                drawNode(n);
             }
             write(path);
         }
 
         private static void drawNode(Node n)
         {
-            throw new NotImplementedException();
+            System.Console.WriteLine("Node " + n.label + " at " + n.position.ToString());
+            //throw new NotImplementedException();
         }
 
         private static void drawEdge(Edge e)
         {
-            throw new NotImplementedException();
+            System.Console.WriteLine("Edge from " + e.left.label + " at " + e.left.position.ToString() + " to " + e.right.label + " at " + e.right.position.ToString());
+            //throw new NotImplementedException();
         }
 
         // write final document to file
         private static void write(string path)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }

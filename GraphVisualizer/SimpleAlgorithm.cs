@@ -29,6 +29,18 @@ namespace GraphVisualizer
             return c_3 / a.vector_to(b).LengthSquared();
         }
 
+        public override void start(Graph g)
+        {
+            Random rnd = new Random();
+            foreach (Node n in g.nodes)
+            {
+                float x = (float)rnd.NextDouble();
+                float y = (float)rnd.NextDouble();
+                Vector2 pos = new Vector2(x, y);
+                n.position = pos;
+            }
+        }
+
         public override bool step(Graph g)
         {
             Dictionary<Edge, float> edge_forces = new Dictionary<Edge, float>();
@@ -39,10 +51,9 @@ namespace GraphVisualizer
             Node other;
 
             // calculate the strength of the edges
-            Edge[] graph_edges = g.edges.ToArray();
-            for (int i = 0; i < graph_edges.Length; i++ ) {
-                Edge e = graph_edges[i];
-                float edgeforce = springStrength(g.edges.ElementAt(i).Length);
+            for (int i = 0; i < g.edges.Count; i++ ) {
+                Edge e = g.edges.ElementAt(i);
+                float edgeforce = springStrength(e.Length);
                 edge_forces.Add(e, edgeforce);
             }
 
@@ -51,6 +62,7 @@ namespace GraphVisualizer
                 Node n = g.nodes.ElementAt(i);
                 Vector2 sum = new Vector2(0,0);
                 for (int j = 0; j < g.nodes.Count; j++ ) {
+                    if (i == j) { continue; } // do not calculate force with self
                     other = g.nodes.ElementAt(j);
                     bool is_neighbour = n.neighbours().Contains(other);
                     if (is_neighbour) { continue; } // adjacent nodes do not repel

@@ -20,16 +20,6 @@ namespace GraphVisualizer
             this.parent = g;
         }
 
-        public override bool Equals(object obj)
-        {
-            return label.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return label.GetHashCode();
-        }
-
         public Node[] neighbours()
         {
             return parent.neigbours(this);
