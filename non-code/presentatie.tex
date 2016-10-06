@@ -22,7 +22,7 @@
     \frametitle{Introductie: wat is force directed graph drawing}
     \begin{itemize}
         \item{Algoritme voor het tekenen van grafen}
-        \item{Aantrekkende en afstotende kracht}
+        \item{Nodes stoten elkaar af, edges trekken ze naar elkaar}
         \item{Simuleert beweging}
         \item{Multidimensionaal}
     \end{itemize}
@@ -58,12 +58,24 @@
 \end{frame}
 
 \begin{frame}
+    \frametitle{Variant Fruchterman \& Reingold (1991)}
+    \begin{itemize}
+		\item{Uitbreiding van Eades}
+		\item{Graaf heeft "temperatuur"}
+		\item{$c_4$ neemt linear af}
+		\item{Grootte van bewegingen neemt af}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
     \frametitle{Hypotheses}
     \begin{itemize}
         \item{Looptijd tegenover aantal iteraties is lineair}
+        \item{Looptijd van algoritme neemt kwadratisch toe naarmate het aantal vertices stijgt}
         \item{Som van de lengte van de ribben neemt lineair toe bij het vergroten van $c_3$}
         \item{Som van de lengte van de ribben neemt lineair af bij het verlagen van $c_1$}
-        \item{Looptijd van algoritme neemt kwadratisch toe naarmate het aantal vertices stijgt}
+        \item{Naarmate het aantal iteraties toeneemt, neemt het aantal kruisingen af}
+        \item{Fruchterman \& Reingold stabiliseert sneller dan Eades}
     \end{itemize}
 \end{frame}
 
@@ -73,6 +85,7 @@
         \item{Looptijd}
         \item{Looptijd per iteratie}
         \item{Totale lengte van de ribben}
+        \item{Aantal kruisingen}
     \end{itemize}
 \end{frame}
 
@@ -82,6 +95,7 @@
         \item{Internet routing table}
         \begin{itemize}
             \item{Internet is een graaf!}
+            \item{.. Of een deel hiervan}
         \end{itemize}
         \item{Gegenereerde data}
         \begin{itemize}
@@ -100,6 +114,8 @@
             \item{Geoptimaliseerde algoritmes voor grote grafen}
         \end{itemize}
         \item{Bipartiet / niet-partitiete grafen}
+        \item{3D}
+        \item{Onsamenhangende grafen}
         \item{Spoorkaart}
         \begin{itemize}
             \item{Wilden we doen, maar data is lastig te verkrijgen}
@@ -107,10 +123,9 @@
     \end{itemize}
 \end{frame}
 
-
 \begin{frame}
     \frametitle{Vragen}
-    Bedankt voor uw aandacht. U kunt nu vragen stellen als u die heeft.
+    \center{\textbf{Vragen?}}
 \end{frame}
 
 \end{document}
