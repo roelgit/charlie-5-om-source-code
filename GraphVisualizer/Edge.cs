@@ -25,21 +25,11 @@ namespace GraphVisualizer
             }
         }
 
-        public override bool Equals(object obj)
-        {
-            return representation.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return representation.GetHashCode();
-        }
-
         public float Length
         {
             get
             {
-                return 0;
+                return (right.position - left.position).Length();
             }
         }
     }

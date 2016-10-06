@@ -21,13 +21,22 @@ namespace GraphVisualizer
         public void addNode(string label)
         {
             if (finalized) { throw new Exception("Cannot add a node to a finalized graph");  }
-            //Node n = new Node(label, this);
-            //nodes.Add(n); // should throw exception if node is already in set?
+            Node n = new Node(label, this);
+            nodes.Add(n); // should throw exception if node is already in set?
         }
 
         public void addEdge(string left, string right)
         {
+            Node a = findNode(left);
+            Node b = findNode(right);
+            addEdge(a, b);
+        }
+
+        public void addEdge(Node left, Node right)
+        {
             if (finalized) { throw new Exception("Cannot add an edge to a finalized graph"); }
+            Edge e = new Edge(left, right);
+            edges.Add(e);
             // todo: check if edge OR its reverse already exists in edge list
             // todo: check if nodes exist
         }
@@ -60,6 +69,18 @@ namespace GraphVisualizer
                 }
             }
             return tmp.ToArray();
+        }
+
+        public Node findNode(string label)
+        {
+            foreach (Node n in nodes)
+            {
+                if (n.label == label)
+                {
+                    return n;
+                }
+            }
+            throw new Exception("You can't do this.");
         }
 
         // call this method when you are done adding nodes and edges.

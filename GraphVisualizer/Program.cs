@@ -13,15 +13,29 @@ namespace GraphVisualizer
             string inputFile = args[0];
             string outputFile = args[1];
 
-            IInputLoader l = new NSInput();
+            IInputLoader l = new TestInput();
             Graph g = l.load(inputFile);
-            Graph sub = SubgraphSelector.process(g, "", 0);
-            Algorithm a = new SimpleAlgorithm();
+            //Graph g = SubgraphSelector.process(g, "", 0);
+            float c_1 = 1.0F;
+            float c_2 = 1.0F;
+            float c_3 = 1.0F;
+            float c_4 = 1.0F;
+            Algorithm a = new SimpleAlgorithm(c_1, c_2, c_3, c_4);
 
             // Todo: instrument this call
-            a.run(sub);
+            //a.run(g);
 
-            Visualizer.visualize(sub, outputFile);
+            //Visualizer.visualize(g, outputFile);
+
+            a.start(g);
+            Visualizer.visualize(g, outputFile);
+            for (int i = 0; i < 5; i++)
+            {
+                System.Console.WriteLine("-------------");
+                a.run(g);
+                Visualizer.visualize(g, outputFile);
+            }
+            System.Console.ReadKey();
         }
     }
 }
