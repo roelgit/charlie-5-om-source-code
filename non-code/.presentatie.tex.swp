@@ -1,0 +1,68 @@
+\documentclass[11pt]{beamer}
+%Gummi|065|=)
+\title{\textbf{Force directed graph drawing}}
+\author{Roxanne Giling\\
+		Laurens Post\\
+		Jeroen Hoegen Dijkhof}
+\date{}
+\begin{document}
+
+\begin{frame}
+    \frametitle{\maketitle}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Wat is force directed graph drawing}
+    \begin{itemize}
+        \item{Algoritme voor het tekenen van grafen}
+        \item{Aantrekkende en afstotende kracht}
+        \item{Simuleert beweging}
+        \item{Multidimensionaal}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Algoritme dat we testen}
+    \begin{itemize}
+        \item{Gepubliceerd door Eades in 1984}
+        \item{Gemaakt voor het tekenen van relatief kleine grafen}
+        \item{Krachten optellen}
+        \begin{itemize}
+            \item{
+                 $d_{u,v}$ = afstand tussen u en v
+            }
+            \item{
+                \begin{math}
+                    aantrekking_{v,u} = c_1 * log(\frac{d_{u,v}}{c_2})
+                \end{math}
+            }
+            \item{
+                \begin{math}
+                    afstoting_{v,u} = \frac{c_3}{d_{v,u}^2}
+                \end{math}
+            }
+            \item {
+                \begin{math}
+                    beweging_u = c_4 * \sum_{i=1}^V{(aantrekking_{u,V_i} + afstoting_{u,V_i})}
+                \end{math}
+            }
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Vooraf verzamelde data}
+    //TODO
+\end{frame}
+
+\begin{frame}
+    \frametitle{Hypotheses}
+    //TODO
+\end{frame}
+
+\begin{frame}
+    \frametitle{Vragen}
+    U kunt nu vragen stellen als u die heeft.
+\end{frame}
+
+\end{document}
