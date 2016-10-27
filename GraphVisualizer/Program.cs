@@ -35,12 +35,13 @@ namespace GraphVisualizer
 
             a.start(g);
             a.run(g);
-            Visualizer.Visualize(g, outputFile);
+            Visualizer v = new Visualizer();
+            v.Visualize(g, outputFile, 1024, 1024);
             for (int i = 0; i < 5; i++)
             {
                 System.Console.WriteLine("-------------");
                 a.run(g);
-                Visualizer.Visualize(g, outputFile);
+                v.Visualize(g, outputFile);
             }
             System.Console.ReadKey();
         }

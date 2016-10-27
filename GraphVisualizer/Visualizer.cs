@@ -11,28 +11,69 @@ namespace GraphVisualizer
     /// <summary>
     /// A class to Visualize the graph
     /// </summary>
-    static class Visualizer
+    internal class Visualizer
     {
-        static Pen edgePen, vertexPen;
-        static Graphics graphics;
-        static Bitmap bitmap;
-        static Brush b;
-        static Font f;
+        private readonly Pen _edgePen;
+        private readonly Pen _vertexPen;
+        private Graphics _graphics;
+        private Bitmap _bitmap;
+        private readonly Brush _backgroundColor;
+        private readonly Font _font;
+        private GraphStatistics _stats;
+
+        // These member variables are for calculating the right coordinates
+        private float _xOffset;
+        private float _yOffset;
+        private float _xMultiplier;
+        private float _yMultiplier;
+
+        /// <summary>
+        /// The size of the node (in pixels)
+        /// </summary>
+        public int NodeSize { get; protected set; }
+
+
+        /// <summary>
+        /// Create a new Visualizer, not specifying the parameters
+        /// </summary>
+        public Visualizer() : this (Color.White, Color.Red, Color.Green, new Font("Arial", 12))
+        {
+            
+        }
+
+        /// <summary>
+        /// Create a new Visualizer, specifying the parameters
+        /// </summary>
+        /// <param name="backgroundColor">The backgroundColor color of the graph</param>
+        /// <param name="nodeColor">The node color of the graph</param>
+        /// <param name="edgeColor">The edge color of the graph</param>
+        /// <param name="font">The font to use for the labels</param>
+        public Visualizer(Color backgroundColor, Color nodeColor, Color edgeColor, Font font)
+        {
+            this._backgroundColor = new SolidBrush(backgroundColor);
+            _edgePen = new Pen(edgeColor);
+            _vertexPen = new Pen(nodeColor);
+            _font = font;
+        }
 
         /// <summary>
         /// Start visualizing
         /// </summary>
         /// <param name="g">The graph to Visualize</param>
         /// <param name="path">The path to write an image to</param>
-        public static void Visualize(Graph g, string path)
+        /// <param name="imageWidth">The width of the image file</param>
+        /// <param name="imageHeight">The height of the image file</param>
+        /// <param name="nodeSize">The diameter of the nodes, in pixels</param>
+        public void Visualize(Graph g, string path, int imageWidth = 300, int imageHeight = 300, int nodeSize = 5)
         {
-            edgePen = new Pen(Color.Green);
-            b = new SolidBrush(Color.White);
-            vertexPen = new Pen(Color.Red);
-            f = new Font("Arial", 12);
-            bitmap = new Bitmap(300, 300);
-            graphics = Graphics.FromImage(bitmap);
-            graphics.Clear(Color.White);
+            _stats = GraphStatistics.From(g);
+            CalculateScale(_stats, imageWidth, imageHeight);
+
+            _bitmap = new Bitmap(imageWidth, imageHeight);
+            _graphics = Graphics.FromImage(_bitmap);
+            _graphics.FillRectangle(_backgroundColor, 0, 0, _bitmap.Width, _bitmap.Height);
+
+            NodeSize = nodeSize;
 
             DrawGraph(g, path);
         }
@@ -42,14 +83,14 @@ namespace GraphVisualizer
         /// </summary>
         /// <param name="g">The graph to draw</param>
         /// <param name="path">The file to draw to</param>
-        public static void DrawGraph(Graph g, string path)
+        public void DrawGraph(Graph g, string path)
         {
-            foreach (Node n in g.nodes)
+            foreach (var n in g.nodes)
             {
                 DrawNode(n);
             }
 
-            foreach (Edge e in g.edges)
+            foreach (var e in g.edges)
             {
                 DrawEdge(e);
             }
@@ -60,19 +101,21 @@ namespace GraphVisualizer
         /// Draw a single node
         /// </summary>
         /// <param name="n">The node to draw</param>
-        private static void DrawNode(Node n)
+        private void DrawNode(Node n)
         {
-            graphics.DrawEllipse(vertexPen, ToRectangle(ToPoint(n.position)));
-            graphics.DrawString(n.label, f, b, LabelPoint(n.position));
+            PointF nodePosition = ToPoint(n.position);
+            Console.WriteLine("Drawing node {0} at {1};{2}", n.label, nodePosition.X, nodePosition.Y);
+            _graphics.DrawEllipse(_vertexPen, nodePosition.X, nodePosition.Y, NodeSize, NodeSize);
+            _graphics.DrawString(n.label, _font, _backgroundColor, LabelPoint(n.position));
         }
 
         /// <summary>
         /// Draw a single edge
         /// </summary>
         /// <param name="e">The edge to draw</param>
-        private static void DrawEdge(Edge e)
+        private void DrawEdge(Edge e)
         {
-            graphics.DrawLine(edgePen, ToPoint(e.left.position), ToPoint(e.right.position));
+            _graphics.DrawLine(_edgePen, ToPoint(e.left.position), ToPoint(e.right.position));
         }
 
         /// <summary>
@@ -80,9 +123,9 @@ namespace GraphVisualizer
         /// </summary>
         /// <param name="p">The point to convert</param>
         /// <returns>The rectangle based on the point</returns>
-        private static RectangleF ToRectangle(PointF p)
+        private RectangleF ToRectangle(PointF p)
         {
-            return new RectangleF(p.X - 2, p.Y - 2, 4, 4);
+            return new RectangleF((p.X + _xOffset)*_xMultiplier, (p.Y + _yOffset)*_yMultiplier, 4, 4);
         }
 
         /// <summary>
@@ -90,9 +133,9 @@ namespace GraphVisualizer
         /// </summary>
         /// <param name="v">The vector to convert</param>
         /// <returns>The point</returns>
-        private static PointF ToPoint(Vector2 v)
+        private PointF ToPoint(Vector2 v)
         {
-            return new PointF(v.X, v.Y);
+            return new PointF((v.X+_xOffset)*_xMultiplier, (v.Y+_yOffset) * _yMultiplier);
         }
 
         /// <summary>
@@ -100,18 +143,40 @@ namespace GraphVisualizer
         /// </summary>
         /// <param name="v">The vector of the node</param>
         /// <returns>A point where the label is drawn</returns>
-        private static PointF LabelPoint(Vector2 v)
+        private PointF LabelPoint(Vector2 v)
         {
-            return new PointF((float)(v.X - 10.0), v.Y - 2);
+            // Place the label at (-10,-2) to the node
+            return ToPoint(v) - new Size(10, 2);
         }
 
         /// <summary>
         /// Write the final output to the file
         /// </summary>
         /// <param name="path">The path to write to</param>
-        private static void Write(string path)
+        private void Write(string path)
         {
-            bitmap.Save(path, System.Drawing.Imaging.ImageFormat.Bmp);
+            _bitmap.Save(path, System.Drawing.Imaging.ImageFormat.Bmp);
+        }
+
+        /// <summary>
+        /// Calculate the required Bitmap size
+        /// </summary>
+        /// <param name="stats">The statistics to work with</param>
+        /// <param name="intendedWidth">The intended height of the bitmap, in pixels</param>
+        /// <param name="intendedHeight">The intended height of the bitmap, in pixels</param>
+        /// <returns>A rectangle containing the bitmap size</returns>
+        private void CalculateScale(GraphStatistics stats, int intendedWidth = 300, int intendedHeight = 300)
+        {
+            var rect = new Rectangle();
+
+            rect.X = rect.Y = 0;
+            _xMultiplier = intendedWidth/stats.Width;
+            _yMultiplier = intendedHeight/stats.Height;
+            _xOffset = -stats.GraphArea.X;
+            _yOffset = -stats.GraphArea.Y;
+
+            rect.Width = (int)(intendedWidth*_xMultiplier);
+            rect.Height = (int) (intendedHeight*_yMultiplier);
         }
     }
 }
