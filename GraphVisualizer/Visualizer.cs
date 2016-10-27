@@ -108,7 +108,6 @@ namespace GraphVisualizer
         private void DrawNode(Node n)
         {
             PointF nodePosition = ToPoint(n.position);
-            Console.WriteLine("Drawing node {0} at {1};{2}", n.label, nodePosition.X, nodePosition.Y);
             _graphics.DrawEllipse(_vertexPen, nodePosition.X, nodePosition.Y, NodeSize, NodeSize);
             _graphics.DrawString(n.label, _font, _fontBrush, nodePosition);
         }
@@ -174,8 +173,6 @@ namespace GraphVisualizer
         /// <returns>A rectangle containing the bitmap size</returns>
         private void CalculateScale(GraphStatistics stats, int intendedWidth, int intendedHeight, int boundary)
         {
-            var rect = new Rectangle();
-
             _xMultiplier = (intendedWidth - (2 * boundary)) /stats.Width;
             _yMultiplier = (intendedHeight - (2 * boundary))/stats.Height;
             _xOffset = -stats.GraphArea.X + ((float)boundary)/_xMultiplier;

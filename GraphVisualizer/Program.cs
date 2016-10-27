@@ -22,10 +22,10 @@ namespace GraphVisualizer
             IInputLoader l = new TestInput();
             Graph g = l.load(inputFile);
             //Graph g = SubgraphSelector.process(g, "", 0);
-            float c_1 = 1.0F;
+            float c_1 = 2.0F;
             float c_2 = 1.0F;
             float c_3 = 1.0F;
-            float c_4 = 1.0F;
+            float c_4 = 0.1F;
             Algorithm a = new SimpleAlgorithm(c_1, c_2, c_3, c_4);
 
             // Todo: instrument this call
@@ -39,7 +39,7 @@ namespace GraphVisualizer
             v.Visualize(g, outputFile, 1024, 1024);
             for (int i = 0; i < 5; i++)
             {
-                System.Console.WriteLine("-------------");
+                Console.WriteLine("-------------");
                 a.run(g);
                 v.Visualize(g, outputFile);
             }
