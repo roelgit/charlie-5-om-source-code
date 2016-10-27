@@ -43,7 +43,10 @@ namespace GraphVisualizer
                 a.run(g);
                 v.Visualize(g, outputFile);
             }
+
+#if DEBUG
             System.Console.ReadKey();
+#endif
         }
     }
 }

@@ -19,6 +19,7 @@ namespace GraphVisualizer
         private Bitmap _bitmap;
         private readonly Brush _backgroundColor;
         private readonly Font _font;
+        private readonly Brush _fontBrush;
         private GraphStatistics _stats;
 
         // These member variables are for calculating the right coordinates
@@ -36,7 +37,7 @@ namespace GraphVisualizer
         /// <summary>
         /// Create a new Visualizer, not specifying the parameters
         /// </summary>
-        public Visualizer() : this (Color.White, Color.Red, Color.Green, new Font("Arial", 12))
+        public Visualizer() : this (Color.White, Color.Red, Color.Green, Color.Black, new Font("Arial", 12))
         {
             
         }
@@ -47,12 +48,14 @@ namespace GraphVisualizer
         /// <param name="backgroundColor">The backgroundColor color of the graph</param>
         /// <param name="nodeColor">The node color of the graph</param>
         /// <param name="edgeColor">The edge color of the graph</param>
-        /// <param name="font">The font to use for the labels</param>
-        public Visualizer(Color backgroundColor, Color nodeColor, Color edgeColor, Font font)
+        /// <param name="fontBrush">The font color for the labels on the graph</param>
+        /// <param name="font">The font to use for the labels on the graph</param>
+        public Visualizer(Color backgroundColor, Color nodeColor, Color edgeColor, Color fontColor, Font font)
         {
             this._backgroundColor = new SolidBrush(backgroundColor);
             _edgePen = new Pen(edgeColor);
             _vertexPen = new Pen(nodeColor);
+            _fontBrush = new SolidBrush(fontColor);
             _font = font;
         }
 
@@ -63,11 +66,12 @@ namespace GraphVisualizer
         /// <param name="path">The path to write an image to</param>
         /// <param name="imageWidth">The width of the image file</param>
         /// <param name="imageHeight">The height of the image file</param>
+        /// <param name="boundary">The boundary around the graph on the image, so that there's a bit of clear space around the graph</param>
         /// <param name="nodeSize">The diameter of the nodes, in pixels</param>
-        public void Visualize(Graph g, string path, int imageWidth = 300, int imageHeight = 300, int nodeSize = 5)
+        public void Visualize(Graph g, string path, int imageWidth = 300, int imageHeight = 300, int boundary = 30, int nodeSize = 5)
         {
             _stats = GraphStatistics.From(g);
-            CalculateScale(_stats, imageWidth, imageHeight);
+            CalculateScale(_stats, imageWidth, imageHeight, boundary);
 
             _bitmap = new Bitmap(imageWidth, imageHeight);
             _graphics = Graphics.FromImage(_bitmap);
@@ -106,7 +110,7 @@ namespace GraphVisualizer
             PointF nodePosition = ToPoint(n.position);
             Console.WriteLine("Drawing node {0} at {1};{2}", n.label, nodePosition.X, nodePosition.Y);
             _graphics.DrawEllipse(_vertexPen, nodePosition.X, nodePosition.Y, NodeSize, NodeSize);
-            _graphics.DrawString(n.label, _font, _backgroundColor, LabelPoint(n.position));
+            _graphics.DrawString(n.label, _font, _fontBrush, nodePosition);
         }
 
         /// <summary>
@@ -135,7 +139,9 @@ namespace GraphVisualizer
         /// <returns>The point</returns>
         private PointF ToPoint(Vector2 v)
         {
-            return new PointF((v.X+_xOffset)*_xMultiplier, (v.Y+_yOffset) * _yMultiplier);
+            var x = (v.X + _xOffset) * _xMultiplier;
+            var y = (v.Y + _yOffset) * _yMultiplier;
+            return new PointF(x, y);
         }
 
         /// <summary>
@@ -164,19 +170,16 @@ namespace GraphVisualizer
         /// <param name="stats">The statistics to work with</param>
         /// <param name="intendedWidth">The intended height of the bitmap, in pixels</param>
         /// <param name="intendedHeight">The intended height of the bitmap, in pixels</param>
+        /// <param name="boundary">The boundary around the graph on the image, so that there's a bit of clear space around the graph</param>
         /// <returns>A rectangle containing the bitmap size</returns>
-        private void CalculateScale(GraphStatistics stats, int intendedWidth = 300, int intendedHeight = 300)
+        private void CalculateScale(GraphStatistics stats, int intendedWidth, int intendedHeight, int boundary)
         {
             var rect = new Rectangle();
 
-            rect.X = rect.Y = 0;
-            _xMultiplier = intendedWidth/stats.Width;
-            _yMultiplier = intendedHeight/stats.Height;
-            _xOffset = -stats.GraphArea.X;
-            _yOffset = -stats.GraphArea.Y;
-
-            rect.Width = (int)(intendedWidth*_xMultiplier);
-            rect.Height = (int) (intendedHeight*_yMultiplier);
+            _xMultiplier = (intendedWidth - (2 * boundary)) /stats.Width;
+            _yMultiplier = (intendedHeight - (2 * boundary))/stats.Height;
+            _xOffset = -stats.GraphArea.X + ((float)boundary)/_xMultiplier;
+            _yOffset = -stats.GraphArea.Y + ((float)boundary) / _yMultiplier;
         }
     }
 }
