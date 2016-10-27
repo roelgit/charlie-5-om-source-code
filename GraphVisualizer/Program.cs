@@ -31,15 +31,16 @@ namespace GraphVisualizer
             // Todo: instrument this call
             //a.run(g);
 
-            //Visualizer.visualize(g, outputFile);
+            //Visualizer.Visualize(g, outputFile);
 
             a.start(g);
-            Visualizer.visualize(g, outputFile);
+            a.run(g);
+            Visualizer.Visualize(g, outputFile);
             for (int i = 0; i < 5; i++)
             {
                 System.Console.WriteLine("-------------");
                 a.run(g);
-                Visualizer.visualize(g, outputFile);
+                Visualizer.Visualize(g, outputFile);
             }
             System.Console.ReadKey();
         }

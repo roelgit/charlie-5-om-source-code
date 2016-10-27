@@ -8,6 +8,9 @@ using System.Numerics;
 
 namespace GraphVisualizer
 {
+    /// <summary>
+    /// A class to Visualize the graph
+    /// </summary>
     static class Visualizer
     {
         static Pen edgePen, vertexPen;
@@ -16,59 +19,97 @@ namespace GraphVisualizer
         static Brush b;
         static Font f;
 
-        public static void visualize(Graph g, string path)
+        /// <summary>
+        /// Start visualizing
+        /// </summary>
+        /// <param name="g">The graph to Visualize</param>
+        /// <param name="path">The path to write an image to</param>
+        public static void Visualize(Graph g, string path)
         {
             edgePen = new Pen(Color.Green);
+            b = new SolidBrush(Color.White);
             vertexPen = new Pen(Color.Red);
             f = new Font("Arial", 12);
             bitmap = new Bitmap(300, 300);
             graphics = Graphics.FromImage(bitmap);
+            graphics.Clear(Color.White);
 
             DrawGraph(g, path);
         }
 
+        /// <summary>
+        /// Draw the graph to a file
+        /// </summary>
+        /// <param name="g">The graph to draw</param>
+        /// <param name="path">The file to draw to</param>
         public static void DrawGraph(Graph g, string path)
         {
             foreach (Node n in g.nodes)
             {
-                drawNode(n);
+                DrawNode(n);
             }
 
             foreach (Edge e in g.edges)
             {
-                drawEdge(e);
+                DrawEdge(e);
             }
-            write(path);
+            Write(path);
         }
 
-        private static void drawNode(Node n)
+        /// <summary>
+        /// Draw a single node
+        /// </summary>
+        /// <param name="n">The node to draw</param>
+        private static void DrawNode(Node n)
         {
-            graphics.DrawEllipse(vertexPen, toRectangle(toPoint(n.position)));
-            graphics.DrawString(n.label, f, b, labelPoint(n.position));
+            graphics.DrawEllipse(vertexPen, ToRectangle(ToPoint(n.position)));
+            graphics.DrawString(n.label, f, b, LabelPoint(n.position));
         }
 
-        private static void drawEdge(Edge e)
+        /// <summary>
+        /// Draw a single edge
+        /// </summary>
+        /// <param name="e">The edge to draw</param>
+        private static void DrawEdge(Edge e)
         {
-            graphics.DrawLine(edgePen, toPoint(e.left.position), toPoint(e.right.position));
+            graphics.DrawLine(edgePen, ToPoint(e.left.position), ToPoint(e.right.position));
         }
 
-        private static RectangleF toRectangle(PointF p)
+        /// <summary>
+        /// Convert a point to a rectangle
+        /// </summary>
+        /// <param name="p">The point to convert</param>
+        /// <returns>The rectangle based on the point</returns>
+        private static RectangleF ToRectangle(PointF p)
         {
             return new RectangleF(p.X - 2, p.Y - 2, 4, 4);
         }
 
-        private static PointF toPoint(Vector2 v)
+        /// <summary>
+        /// Convert a vector to a point. Places the X and Y components of a Vector2 into the X and Y positions of a point
+        /// </summary>
+        /// <param name="v">The vector to convert</param>
+        /// <returns>The point</returns>
+        private static PointF ToPoint(Vector2 v)
         {
             return new PointF(v.X, v.Y);
         }
 
-        private static PointF labelPoint(Vector2 v)
+        /// <summary>
+        /// Calculate where to draw the label
+        /// </summary>
+        /// <param name="v">The vector of the node</param>
+        /// <returns>A point where the label is drawn</returns>
+        private static PointF LabelPoint(Vector2 v)
         {
             return new PointF((float)(v.X - 10.0), v.Y - 2);
         }
 
-        // write final document to file
-        private static void write(string path)
+        /// <summary>
+        /// Write the final output to the file
+        /// </summary>
+        /// <param name="path">The path to write to</param>
+        private static void Write(string path)
         {
             bitmap.Save(path, System.Drawing.Imaging.ImageFormat.Bmp);
         }
