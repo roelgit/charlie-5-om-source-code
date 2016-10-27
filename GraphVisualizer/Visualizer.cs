@@ -64,7 +64,7 @@ namespace GraphVisualizer
 
         private static PointF labelPoint(Vector2 v)
         {
-            return new PointF(v.X - 10.0, v.Y - 2);
+            return new PointF((float)(v.X - 10.0), v.Y - 2);
         }
 
         // write final document to file

@@ -10,6 +10,12 @@ namespace GraphVisualizer
     {
         static void Main(string[]args)
         {
+            if (args.Length < 2)
+            {
+                Console.WriteLine("Please enter more parameters");
+                return;
+            }
+
             string inputFile = args[0];
             string outputFile = args[1];
 
