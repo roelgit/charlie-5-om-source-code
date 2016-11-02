@@ -11,6 +11,9 @@ namespace GraphVisualizer
     {
         static void Main(string[]args)
         {
+            RuntimeVsVertices();
+            RuntimeVsIterations();
+            return;
             if (args.Length < 2)
             {
                 Console.WriteLine("Please enter more parameters");
@@ -38,6 +41,7 @@ namespace GraphVisualizer
             public int iterations;
             public double runtime;
             public GraphStatistics stats;
+            public Graph graph;
         }
 
         private static results runner(string inputFile, string outputFile, float spring_multiplier, float spring_neutral_distance, float repellant_multiplier, float dampening, int max_iterations)
@@ -50,7 +54,10 @@ namespace GraphVisualizer
             //a.run(g);
             Visualizer v = new Visualizer();
 
-            System.IO.FileInfo fi = new System.IO.FileInfo(outputFile);
+            System.IO.FileInfo fi;
+
+            if (outputFile != null)
+                fi= new System.IO.FileInfo(outputFile);
             int i = 1;
             a.start(g);
             var start = Process.GetCurrentProcess().TotalProcessorTime;
@@ -61,13 +68,70 @@ namespace GraphVisualizer
                 i++;
             }
             var stop = Process.GetCurrentProcess().TotalProcessorTime;
-            v.Visualize(g, outputFile, 1024, 1024);
+
+            if (outputFile!=null)
+                v.Visualize(g, outputFile, 1024, 1024);
 
             results r = new results();
             r.iterations = i;
             r.runtime = (stop - start).TotalMilliseconds;
             r.stats = GraphStatistics.From(g);
+            r.graph = g;
             return r;
+        }
+
+        private static String PrintCSV(String[] fields)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach(var s in fields)
+            {
+                sb.Append(s);
+                sb.Append(";");
+            }
+
+            return sb.ToString();
+        }
+
+
+        private static String[] TestFilePaths()
+        {
+            var dir = new System.IO.DirectoryInfo("../../../data");
+            var names = new List<String>();
+            foreach (var fi in dir.GetFiles("*.txt"))
+                names.Add(fi.FullName);
+
+            return names.ToArray();
+        }
+
+        private static void RuntimeVsIterations(int MAX_ITERATIONS = 40000, float spring_multiplier = 1.0f, float spring_neutral_distance = 1.0f, float repellant_multiplier = 1.0f, float dampening = 1.0f)
+        {
+            foreach (var filename in TestFilePaths())
+            {
+                var outputStream = new System.IO.StreamWriter(new System.IO.FileInfo("RuntimeVsIterations_" + new System.IO.FileInfo(filename).Name + ".csv").OpenWrite());
+                outputStream.WriteLine(PrintCSV(new String[] { "Iterations", "Runtime" }));
+                for (int iterations = 1; iterations < MAX_ITERATIONS; iterations += 1000)
+                {
+                    var results = runner(filename, null, spring_multiplier, spring_neutral_distance, spring_multiplier, dampening, iterations);
+                    outputStream.WriteLine(PrintCSV(new String[] { "" + iterations, "" + results.runtime }));
+                    Console.Write("{0} Iterations: {1}\r", filename, iterations);
+                }
+                outputStream.Close();
+            }
+        }
+
+        private static void RuntimeVsVertices(float spring_multiplier = 1.0f, float spring_neutral_distance = 1.0f, float repellant_multiplier = 1.0f, float dampening = 1.0f)
+        {
+            int iterations = 5000;
+
+            var outputStream = new System.IO.StreamWriter(new System.IO.FileInfo("RuntimeVsVertices.csv").OpenWrite());
+            outputStream.WriteLine(PrintCSV(new String[] { "Vertices", "Runtime" }));
+            foreach (var filename in TestFilePaths())
+            {
+                var results = runner(filename, null, spring_multiplier, spring_neutral_distance, spring_multiplier, dampening, iterations);
+                outputStream.WriteLine(PrintCSV(new String[] { "" + results.graph.nodes.Count, "" + results.runtime }));
+                Console.Write("{0} Vertices: {1}\r", filename, results.graph.nodes.Count);
+            }
+            outputStream.Close();
         }
     }
 }
