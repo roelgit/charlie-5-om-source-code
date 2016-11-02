@@ -26,25 +26,29 @@ namespace GraphVisualizer
             float c_2 = 1.0F;
             float c_3 = 1.0F;
             float c_4 = 0.1F;
-            Algorithm a = new SimpleAlgorithm(c_1, c_2, c_3, c_4);
+            Algorithm a = new SimpleAlgorithm(c_1, c_2, c_3, c_4, 100);
 
-            // Todo: instrument this call
             //a.run(g);
-
-            //Visualizer.Visualize(g, outputFile);
-
-            a.start(g);
-            a.run(g);
             Visualizer v = new Visualizer();
+
+            System.IO.FileInfo fi = new System.IO.FileInfo(outputFile);
+            int i = 0;
+            a.start(g);
+            while (!a.step(g))
+            {
+                var frame = fi.DirectoryName + @"\" +fi.Name.Replace(fi.Extension, i++ + fi.Extension);
+                v.Visualize(g, frame, 300, 300, 10, 10);
+            }
             v.Visualize(g, outputFile, 1024, 1024);
-            for (int i = 0; i < 5; i++)
+            /*for (int i = 0; i < 5; i++)
             {
                 Console.WriteLine("-------------");
                 a.run(g);
                 v.Visualize(g, outputFile);
-            }
+            }*/
 
 #if DEBUG
+            Console.WriteLine("Done");
             System.Console.ReadKey();
 #endif
         }

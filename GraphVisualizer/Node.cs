@@ -35,5 +35,10 @@ namespace GraphVisualizer
             // todo: memoize?
             return this.position - n.position;
         }
+
+        public override string ToString()
+        {
+            return String.Format("{0}: {1}", this.label, this.position);
+        }
     }
 }

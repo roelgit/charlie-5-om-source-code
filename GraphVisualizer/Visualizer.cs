@@ -80,6 +80,9 @@ namespace GraphVisualizer
             NodeSize = nodeSize;
 
             DrawGraph(g, path);
+
+            _graphics.Dispose();
+            _bitmap.Dispose();
         }
 
         /// <summary>

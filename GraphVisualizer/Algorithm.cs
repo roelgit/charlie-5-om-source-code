@@ -28,11 +28,7 @@ namespace GraphVisualizer
         public void run(Graph g)
         {
             start(g);
-            bool terminated = false;
-            while (!terminated)
-            {
-                terminated = step(g);
-            }
+            while (!step(g)) ;
         }
     }
 }
