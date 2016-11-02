@@ -9,7 +9,7 @@ namespace GraphVisualizer
 {
     class SimpleAlgorithm : Algorithm
     {
-        readonly float c_1, c_2, c_3, c_4;
+        readonly float spring_multiplier, spring_neutral_distance, repellant_multiplier, dampening;
         /// <summary>
         /// Amount of steps before stopping
         /// </summary>
@@ -19,25 +19,25 @@ namespace GraphVisualizer
         /// </summary>
         private int stepsDone;
 
-        public SimpleAlgorithm(float c_1, float c_2, float c_3, float c_4, int M)
+        public SimpleAlgorithm(float spring_multiplier, float spring_neutral_distance, float repellant_multiplier, float dampening, int M)
         {
-            this.c_1 = c_1;
-            this.c_2 = c_2;
-            this.c_3 = c_3;
-            this.c_4 = c_4;
+            this.spring_multiplier = spring_multiplier;
+            this.spring_neutral_distance = spring_neutral_distance;
+            this.repellant_multiplier = repellant_multiplier;
+            this.dampening = dampening;
             this.M = M;
         }
 
         private float springStrength(float length)
         {
-            float strength = (float)(c_1 * Math.Log10(length / c_2));
+            float strength = (float)(spring_multiplier * Math.Log10(length / spring_neutral_distance));
             return strength;
         }
 
         private float nodeRepellantForce(Node a, Node b)
         {
             var ls = a.vector_to(b).LengthSquared();
-            return ls == 0f ? 1000f : c_3 / ls;
+            return ls == 0f ? 1000f : repellant_multiplier / ls;
         }
 
         public override void start(Graph g)
@@ -62,14 +62,14 @@ namespace GraphVisualizer
             Vector2 direction;
             Node other;
 
-            Console.WriteLine("Stap {0}: {1} nodes, {2} edges", this.stepsDone, g.nodes.Count, g.edges.Count);
+            //Console.WriteLine("Stap {0}: {1} nodes, {2} edges", this.stepsDone, g.nodes.Count, g.edges.Count);
 
             // calculate the strength of the edges
             for (int i = 0; i < g.edges.Count; i++ ) {
                 Edge e = g.edges.ElementAt(i);
                 float edgeforce = springStrength(e.Length);
 
-                Console.WriteLine("Adding force {0} to edge [{1};\t{2}]", edgeforce, e.left, e.right);
+                //Console.WriteLine("Adding force {0} to edge [{1};\t{2}]", edgeforce, e.left, e.right);
 
                 edge_forces.Add(e, edgeforce);
             }
@@ -78,11 +78,11 @@ namespace GraphVisualizer
             for (int i = 0; i < g.nodes.Count; i++) {
                 Node n = g.nodes.ElementAt(i);
                 Vector2 sum = new Vector2(0,0);
-                foreach(var other2 in g.nodes.Where((x)=>(x != n && !n.neighbours().Contains(x))))
+                foreach(Node other2 in g.nodes.Where((x)=>(x != n && !n.neighbours().Contains(x))))
                 {
                     other = other2;
                     direction = other.vector_to(n);
-                    sum += Vector2.Normalize(direction) * nodeRepellantForce(n, other);
+                    sum += direction * nodeRepellantForce(n, other);
                 }
                 /*for (int j = 0; j < g.nodes.Count; j++ ) {
                     if (i == j) { continue; } // do not calculate force with self
@@ -90,7 +90,7 @@ namespace GraphVisualizer
                     bool is_neighbour = n.neighbours().Contains(other);
                     if (is_neighbour) { continue; } // adjacent nodes do not repel
                     direction = other.vector_to(n);
-                    sum += Vector2.Normalize(direction) * nodeRepellantForce(n, other);
+                    sum += direction * nodeRepellantForce(n, other);
                 }*/
 
                 // add the edge forces on this node
@@ -98,13 +98,13 @@ namespace GraphVisualizer
                     if (e.left == n) { other = e.right; } else { other = e.left; }
                     direction = n.vector_to(other);
 
-                    sum += Vector2.Normalize(direction) * edge_forces[e];
+                    sum += direction * edge_forces[e];
                 }
 
-                Console.WriteLine("Adding force {0} to node {1}", sum * c_4, n);
+                //Console.WriteLine("Adding force {0} to node {1}", sum * dampening, n);
 
                 // scale the final force
-                node_forces[i] = sum * c_4;
+                node_forces[i] = sum * dampening;
             }
 
             // move the nodes
@@ -114,7 +114,7 @@ namespace GraphVisualizer
             }
 
 
-            Console.WriteLine("Step done");
+            //Console.WriteLine("Step done");
             //Console.ReadKey();
             return ++stepsDone >= M;
         }
