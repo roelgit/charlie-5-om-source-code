@@ -71,32 +71,39 @@ namespace GraphVisualizer
             public Graph graph;
         }
 
+        /// <summary>
+        /// This function has been kept for compatibility. Use private static results runner(string inputFile, string outputFile, Algorithm a) in the future.
+        /// </summary>
         private static results runner(string inputFile, string outputFile, float spring_multiplier, float spring_neutral_distance, float repellant_multiplier, float dampening, int max_iterations)
         {
             IInputLoader l = new TestInput();
             Graph g = l.load(inputFile);
-            //Graph g = SubgraphSelector.process(g, "", 0);
-            Algorithm a = new SimpleAlgorithm(spring_multiplier, spring_neutral_distance, repellant_multiplier, dampening, max_iterations);
 
-            //a.run(g);
+            float stabilizationThreshold = 0.1f;
+
+            Algorithm a = new SimpleAlgorithm(spring_multiplier, spring_neutral_distance, repellant_multiplier, dampening, max_iterations, stabilizationThreshold);
+
+            return runner(g, outputFile, a);
+        }
+
+        private static results runner(Graph g, string outputFile, Algorithm a)
+        {
             Visualizer v = new Visualizer();
 
             System.IO.FileInfo fi;
 
             if (outputFile != null)
-                fi= new System.IO.FileInfo(outputFile);
+                fi = new System.IO.FileInfo(outputFile);
             int i = 1;
             a.start(g);
             var start = Process.GetCurrentProcess().TotalProcessorTime;
             while (!a.step(g))
             {
-                //var frame = fi.DirectoryName + @"\" + fi.Name.Replace(fi.Extension, i++ + fi.Extension);
-                //v.Visualize(g, frame, 300, 300, 10, 10);
                 i++;
             }
             var stop = Process.GetCurrentProcess().TotalProcessorTime;
 
-            if (outputFile!=null)
+            if (outputFile != null)
                 v.Visualize(g, outputFile, 1024, 1024);
 
             results r = new results();
@@ -140,7 +147,7 @@ namespace GraphVisualizer
                 {
                     var results = runner(filename, null, spring_multiplier, spring_neutral_distance, spring_multiplier, dampening, iterations);
                     outputStream.WriteLine(PrintCSV(new String[] { "" + iterations, "" + results.runtime }));
-                    Console.Write("{0} Iterations: {1}\r", filename, iterations);
+                    Console.Write("{0} Iterations: {1}\r", filename, results.iterations);
                 }
                 outputStream.Close();
             }
@@ -201,6 +208,29 @@ namespace GraphVisualizer
                     outputStream.WriteLine(PrintCSV(new String[] { c3 + "", results.stats.EdgeMean + "", results.stats.EdgeRatio + "", results.stats.EdgeStdDev + "" }));
                 }
             }
+        }
+
+        private static void EadesVsFruchtmanReingold(float spring_multiplier = 1.0f, float spring_neutral_distance = 1.0f, float C = 1f, float repellant_multiplier = 1.0f, float dampening = 1.0f)
+        {
+            float stabilizationThreshold = 0.1f;
+            var fruchmanReingold = new FruchtermanReingoldAlgorithm(spring_multiplier, C, repellant_multiplier, dampening, int.MaxValue, stabilizationThreshold);
+            var eades = new SimpleAlgorithm(spring_multiplier, spring_neutral_distance, repellant_multiplier, dampening, int.MaxValue, stabilizationThreshold);
+
+            var outputStream = new System.IO.StreamWriter(new System.IO.FileInfo("Algorithms.csv").OpenWrite());
+            outputStream.WriteLine(PrintCSV(new String[] { "Eades", "FruchtermanAndReingold" }));
+
+
+            IInputLoader l = new TestInput();
+
+            foreach (var filename in TestFilePaths())
+            {
+                Graph g = l.load(filename);
+                var resultsEades = runner(l.load(filename), null, eades);
+                var resultsFR = runner(l.load(filename), null, fruchmanReingold);
+
+                outputStream.WriteLine(PrintCSV(new String[] { "" + resultsEades.iterations, "" + resultsFR.iterations }));
+            }
+            outputStream.Close();
         }
     }
 }

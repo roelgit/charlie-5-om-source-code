@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
 
 namespace GraphVisualizer
 {
-    class SimpleAlgorithm : Algorithm
+    class FruchtermanReingoldAlgorithm : Algorithm
     {
-        protected readonly float spring_multiplier, spring_neutral_distance, repellant_multiplier, dampening;
+        protected readonly float spring_multiplier, repellant_multiplier, dampening;
         /// <summary>
         /// Amount of steps before stopping
         /// </summary>
@@ -19,30 +19,58 @@ namespace GraphVisualizer
         /// </summary>
         protected int stepsDone;
         /// <summary>
+        /// Constant to determine k
+        /// </summary>
+        private float C;
+        /// <summary>
         /// The maximum amount of movement before a graph can be seen as stable
         /// </summary>
         protected float stabilizationThreshold;
 
-        public SimpleAlgorithm(float spring_multiplier, float spring_neutral_distance, float repellant_multiplier, float dampening, int M, float stabilizationThreshold)
+        public FruchtermanReingoldAlgorithm(float spring_multiplier, float C, float repellant_multiplier, float dampening, int M, float stabilizationThreshold)
         {
             this.spring_multiplier = spring_multiplier;
-            this.spring_neutral_distance = spring_neutral_distance;
             this.repellant_multiplier = repellant_multiplier;
             this.dampening = dampening;
             this.M = M;
+            this.C = C;
             this.stabilizationThreshold = stabilizationThreshold;
         }
 
-        protected virtual float springStrength(float length)
+        protected float nodeRepellantForce(Node a, Node b, float k)
         {
-            float strength = (float)(spring_multiplier * Math.Log10(length / spring_neutral_distance));
-            return strength;
+            return k == 0 ? 1000 : (a.vector_to(b).LengthSquared() / k);
         }
 
-        protected virtual float nodeRepellantForce(Node a, Node b)
+        protected float springStrength(float length, float k)
         {
-            var ls = a.vector_to(b).LengthSquared();
-            return ls == 0f ? 1000f : repellant_multiplier / ls;
+            return -(k * k) / length;
+        }
+
+        protected float calculateArea(Graph g)
+        {
+            float XMin = 0, XMax = 0, YMin = 0, YMax = 0;
+
+            foreach(Node n in g.nodes)
+            {
+                if (XMin > n.position.X)
+                    XMin = n.position.X;
+                if (XMax < n.position.X)
+                    XMax = n.position.X;
+
+                if (YMin > n.position.X)
+                    YMin = n.position.Y;
+                if (YMax < n.position.Y)
+                    YMax = n.position.Y;
+            }
+
+            return (XMax - XMin) * (YMax - YMin);
+        }
+
+        protected float calculateK(Graph g)
+        {
+            var area = calculateArea(g);
+            return C * (float)Math.Sqrt(area / g.nodes.Count);
         }
 
         public override void start(Graph g)
@@ -67,27 +95,32 @@ namespace GraphVisualizer
             Vector2 direction;
             Node other;
 
+            var k = calculateK(g);
+
             // calculate the strength of the edges
-            for (int i = 0; i < g.edges.Count; i++ ) {
+            for (int i = 0; i < g.edges.Count; i++)
+            {
                 Edge e = g.edges.ElementAt(i);
-                float edgeforce = springStrength(e.Length);
+                float edgeforce = springStrength(e.Length, k);
 
                 edge_forces.Add(e, edgeforce);
             }
 
             // calculate the forces on the nodes
-            for (int i = 0; i < g.nodes.Count; i++) {
+            for (int i = 0; i < g.nodes.Count; i++)
+            {
                 Node n = g.nodes.ElementAt(i);
-                Vector2 sum = new Vector2(0,0);
-                foreach(Node other2 in g.nodes.Where((x)=>(x != n && !n.neighbours().Contains(x))))
+                Vector2 sum = new Vector2(0, 0);
+                foreach (Node other2 in g.nodes.Where((x) => (x != n && !n.neighbours().Contains(x))))
                 {
                     other = other2;
                     direction = other.vector_to(n);
-                    sum += direction * nodeRepellantForce(n, other);
+                    sum += direction * nodeRepellantForce(n, other, k);
                 }
 
                 // add the edge forces on this node
-                foreach (Edge e in n.edges()) {
+                foreach (Edge e in n.edges())
+                {
                     if (e.left == n) { other = e.right; } else { other = e.left; }
                     direction = n.vector_to(other);
 
@@ -102,14 +135,15 @@ namespace GraphVisualizer
             double totalForceLengthSquared = 0d;
 
             // move the nodes
-            for (int i = 0; i < g.nodes.Count; i++) {
+            for (int i = 0; i < g.nodes.Count; i++)
+            {
                 Node n = g.nodes.ElementAt(i);
                 n.position += node_forces[i];
 
                 totalForceLengthSquared += node_forces[i].LengthSquared();
             }
 
-            return Math.Sqrt(totalForceLengthSquared) < stabilizationThreshold ||  ++stepsDone >= M;
+            return Math.Sqrt(totalForceLengthSquared) < stabilizationThreshold || ++stepsDone >= M;
         }
     }
 }
