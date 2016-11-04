@@ -29,25 +29,42 @@ For our research, we implemented the relatively simple Spring algorithm designed
 \newline
 The attractive force is calculated by the following equation.
 \begin{equation}\label{e:attract}
-Force = c_1*log(\frac{d}{c_2})
+f_a = c_1*log(\frac{d}{c_2})
 \end{equation}
 In this equation, \emph{d} is the length of the edge between the current vertex and its neighbouring vertex that we are looking it and \emph{$c_1$} and \emph{$c_2$} are constants.
 \newline
 The repelling force is calculated by the following equation.
 \begin{equation}\label{e:repel}
-Force = \frac{c_3}{d^2}
+f_r = \frac{c_3}{d^2}
 \end{equation}
 Once again, \emph{d} is the distance between the pair of vertices we are currently looking at and \emph{$c_3$} is a constant. With these two equations in place, we can see that the logarithmic attractive force stands opposite the quadratic repelling force. This should in theory result in a graph where these two forces are balanced with each-other.
 \newline
 After we have calculated all forces that apply to the current vertex using equations \ref{e:attract} and \ref{e:repel}, we add them all up and we are left with a vector that pushes a vertex in a certain direction with a certain velocity, depending on the outcome. This result however may be too strong and so we add a final equation.
 \begin{equation}\label{e:damper}
-Force_{final} = c_4 * Force_{results}
+f_{final} = c_4 * f_{results}
 \end{equation}
 $c_4$ is once again a predefined constant. This is put in place to make sure that the vertices don't move too chaotically which may result in distorted graphs or it could heavily increase the time it takes until the graph stabilizes.
 \newline
-According to Eades, research has shown that the values $c_1=2$, $c_2=c_3=1$ and $c_4=0.1$ give the best results for most input graphs and that almost all graphs stabilize after 100 iterations.
+According to Eades, research has shown that the values $c_1=2$, $c_2=c_3=1$ and $c_4=0.1$ give the best results for most input graphs and that almost all graphs stabilize with $M=100$ where M is the number of iterations.
+\newline
+An analysis of this algorithm shows that every iteration of the algorithm computes the attractive forces in $O(|E|)$ time where E is the collection of edges in the graph since it has to look at every edge in the graph only once in order to calculate the spring forces for both connected vertices. The repulsive forces are calculated between all pairs of vertices and as such, the time it takes to compute this is $O(|V|^2)$. The iterations are run \emph{M} times and so the time complexity of the algorithm is defined as $O(M*(|E| + |V|^2))$.
+\subsection{Fruchterman and Reingold}
+As part of our experiment, we also found an extention to the above algorithm designed by Fruchterman and Reingold\cite{FandR}. This extension redefines equations \ref{e:attract} and \ref{e:repel} as follows:
+\begin{equation}\label{e:FRattract}
+f_a(d)=\frac{d^2}{k}
+\end{equation}
+\begin{equation}\label{e:FRrepel}
+f_r(d)=-\frac{k^2}{d}
+\end{equation}
+much like in the previous versions of these equations, \emph{d} is once again the distance between the pair of vertices currently looked at. The variable \emph{k} is defined as the optimal distance between the two vertices within the current graph. It is calculated as follows:
+\begin{equation}\label{e:optimalD}
+k=C*\sqrt{\frac{A}{|V|}}
+\end{equation}
+In this new equation, \emph{A} is the total area of the 2D plane that the graph is drawn on and \emph{V} is the collection of vertices within the graph. \emph{C} is defined as the temperature of the graph. Fruchterman and Reingold describe this as a way to control the displacement of vertices. If the graph is highly suboptimal, the temperature is high and this allows the vertices to keep moving. As the graph layout approaches an optimal layout, this temperature is decreased and as such, the vertices move slower and slower until they eventually come to a complete stand still. This approach is based on the idea of simulated annealing.
+\newline
+This extension of the Spring algorithm increases the number of vertices allowed in a graph up to 40, but this is still a very small amount. The time complexity of the algorithm stays the same as with Eades. It is important to note that the time complexity of the repulsive forces can be decreased by only looking at nearby vertices rather than all vertices in the graph. We did not implement this in our project.
 \subsection{Usage of the algorithm}
-
+We have generated our own graphs as input-data with sizes 4, 8 and 16 nodes and with several different set-ups of edges.
 
 \section{The final results}
 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -64,11 +81,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit.\subsection{Difficulties
 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
 \begin{thebibliography}{99}
-\bibitem{Tutte}William T. Tutte. \emph{How to draw a graph.} Proc. London Math. Society, 13(52):743–768, 1963.
-\bibitem{Kawai}T. Kamada and S. Kawai. \emph{An algorithm for drawing general undirected graphs.} Inform. Process. Lett., 31:7–15, 1989.
-\bibitem{Ioannis G Tollis}G. Di Battista, P. Eades, R. Tamassia and I. G Tolli.s \emph{Algorithms for drawing graphs: an annotated bibliography.} Computational Geometry 4 235-282, 1994.
-\bibitem{Purchase}H.C. Purchase, R.F. Cohen and M.I. James. \emph{An Experimental Study of the Basis for Graph Drawing Algorithms.} Springer, Lecture Notes in Computer Science (no. 1027), 1995.
-\bibitem{Eades} Peter Eades. \emph{A heuristic for graph drawing.} Congressus Numerantium, 42:149–160, 1984.
+\bibitem{Tutte}William T. Tutte, \emph{How to draw a graph.}, Proc. London Math. Society, 13(52):743–768, 1963.
+\bibitem{Kawai}T. Kamada and S. Kawai, \emph{An algorithm for drawing general undirected graphs.}, Inform. Process. Lett., 31:7–15, 1989.
+\bibitem{Ioannis G Tollis}G. Di Battista, P. Eades, R. Tamassia and I. G Tolli.s, \emph{Algorithms for drawing graphs: an annotated bibliography.} Computational Geometry 4 235-282, 1994.
+\bibitem{Purchase}H.C. Purchase, R.F. Cohen and M.I. James, \emph{An Experimental Study of the Basis for Graph Drawing Algorithms.}, Springer, Lecture Notes in Computer Science (no. 1027), 1995.
+\bibitem{Eades} Peter Eades, \emph{A heuristic for graph drawing.}, Congressus Numerantium, 42:149–160, 1984.
+\bibitem{FandR}T. Fruchterman and E. Reingold, \emph{Graph drawing by force-directed place-ment.}, Softw. – Pract. Exp., 1991.
 \end{thebibliography}
 
 \end{document}
