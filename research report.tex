@@ -12,9 +12,6 @@ Force-directed graph drawing is a useful tool for displaying graphs in a neat an
 \end{abstract}
 \newpage
 
-\tableofcontents
-\newpage
-
 \section{Introduction}\label{s:Introduction}
 Force-directed graph drawing has been one of the most flexible and widely used algorithms out there since 1963 with one of the first versions being that of ~Tutte~\cite{Tutte}. These algorithms are used to represent graphs so that they are pleasing to look at. This is done by spacing out the vertices from each-other so that they are clearly visible as separate vertices, but they are also not too spaced out to avoid the resulting image being too big. The algorithms are based on the idea of springs or magnets in that each vertex has both a repulsive as well as an attractive force pulling and pushing on them. Ideally, this makes two vertices spaced out in such a way that these two forces hang in balance with each-other. As a graph grows in size, so does its complexity. Lines may cross with one-another or connected vertices may find themselves stretched out on either side of the initial graph. In our research we have found several different versions in order to handle this increase in complexity, each with their own ideas on how to compute these two forces. Tutte as mentioned above uses a graph's Barycentric representation while others, such as that of Kamada and ~Kawai~\cite{Kawai}, use the theoretic distances of paths in the graph from one vertex to another in order to compute their spring forces. We have gotten most of our information from Kobourov\cite{Kobourov}, including the algorithm that we ended up using as described below in section \ref{s:algorithm}.
 
