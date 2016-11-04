@@ -133,5 +133,27 @@ namespace GraphVisualizer
             }
             outputStream.Close();
         }
+
+        private static void EdgeLengthVsC3(float spring_multiplier = 1.0f, float spring_neutral_distance = 1.0f, float dampening = 1.0f)
+        {
+            int iterations = 5000;
+
+            float precision = 0.01f;
+            float minC3 = 0.01f;
+            float maxC3 = 1.00f;
+
+            foreach (var filename in TestFilePaths())
+            {
+                var outputStream = new System.IO.StreamWriter(new System.IO.FileInfo("EdgeLengthVsC3_" + new System.IO.FileInfo(filename).Name + ".csv").OpenWrite());
+                outputStream.WriteLine(PrintCSV(new String[] { "EdgeLength", "C3" }));
+
+                for(float c3 = minC3; c3 <= maxC3; c3+=precision)
+                {
+                    var results = runner(filename, null, spring_multiplier, spring_neutral_distance, c3, dampening, iterations);
+                    outputStream.WriteLine(PrintCSV(new String[] { "" + results.graph.nodes.Count, "" + results.runtime }));
+                    Console.Write("{0} C3: {1}\r", filename, results.graph.nodes.Count);
+                }
+            }
+        }
     }
 }
