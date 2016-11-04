@@ -7,7 +7,7 @@ using System.Numerics;
 
 namespace GraphVisualizer
 {
-    class SimpleAlgorithm : Algorithm
+    class EadesAlgorithm : Algorithm
     {
         protected readonly float spring_multiplier, spring_neutral_distance, repellant_multiplier, dampening;
         /// <summary>
@@ -23,7 +23,7 @@ namespace GraphVisualizer
         /// </summary>
         protected float stabilizationThreshold;
 
-        public SimpleAlgorithm(float spring_multiplier, float spring_neutral_distance, float repellant_multiplier, float dampening, int M, float stabilizationThreshold)
+        public EadesAlgorithm(float spring_multiplier, float spring_neutral_distance, float repellant_multiplier, float dampening, int M, float stabilizationThreshold)
         {
             this.spring_multiplier = spring_multiplier;
             this.spring_neutral_distance = spring_neutral_distance;

@@ -81,7 +81,7 @@ namespace GraphVisualizer
 
             float stabilizationThreshold = 0.1f;
 
-            Algorithm a = new SimpleAlgorithm(spring_multiplier, spring_neutral_distance, repellant_multiplier, dampening, max_iterations, stabilizationThreshold);
+            Algorithm a = new EadesAlgorithm(spring_multiplier, spring_neutral_distance, repellant_multiplier, dampening, max_iterations, stabilizationThreshold);
 
             return runner(g, outputFile, a);
         }
@@ -94,7 +94,7 @@ namespace GraphVisualizer
 
             if (outputFile != null)
                 fi = new System.IO.FileInfo(outputFile);
-            int i = 1;
+            int i = 0;
             a.start(g);
             var start = Process.GetCurrentProcess().TotalProcessorTime;
             while (!a.step(g))
@@ -107,7 +107,7 @@ namespace GraphVisualizer
                 v.Visualize(g, outputFile, 1024, 1024);
 
             results r = new results();
-            r.iterations = i;
+            r.iterations = i + 1;
             r.runtime = (stop - start).TotalMilliseconds;
             r.stats = GraphStatistics.From(g);
             r.graph = g;
@@ -214,7 +214,7 @@ namespace GraphVisualizer
         {
             float stabilizationThreshold = 0.1f;
             var fruchmanReingold = new FruchtermanReingoldAlgorithm(spring_multiplier, C, repellant_multiplier, dampening, int.MaxValue, stabilizationThreshold);
-            var eades = new SimpleAlgorithm(spring_multiplier, spring_neutral_distance, repellant_multiplier, dampening, int.MaxValue, stabilizationThreshold);
+            var eades = new EadesAlgorithm(spring_multiplier, spring_neutral_distance, repellant_multiplier, dampening, int.MaxValue, stabilizationThreshold);
 
             var outputStream = new System.IO.StreamWriter(new System.IO.FileInfo("Algorithms.csv").OpenWrite());
             outputStream.WriteLine(PrintCSV(new String[] { "Eades", "FruchtermanAndReingold" }));

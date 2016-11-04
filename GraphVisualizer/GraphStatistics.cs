@@ -105,7 +105,7 @@ namespace GraphVisualizer
                 running_variance += sqrdiff;
                 count++;
             }
-            return running_variance / count;
+            return Math.Sqrt(running_variance / count);
         }
     }
 }
