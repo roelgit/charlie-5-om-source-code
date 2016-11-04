@@ -171,7 +171,7 @@ namespace GraphVisualizer
 
             foreach (var filename in TestFilePaths())
             {
-                var outputStream = new System.IO.StreamWriter(new System.IO.FileInfo("EdgeLengthVsC3_" + new System.IO.FileInfo(filename).Name + ".csv").OpenWrite());
+                var outputStream = new System.IO.StreamWriter(new System.IO.FileInfo("EdgeLengthVsC1_" + new System.IO.FileInfo(filename).Name + ".csv").OpenWrite());
                 outputStream.WriteLine(PrintCSV(new String[] { "C3", "EdgeMean", "EdgeRatio", "EdgeStdDev"}));
 
                 for(float c1 = minC1; c1 <= maxC1; c1+=precision)
