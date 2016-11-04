@@ -51,11 +51,11 @@ namespace GraphVisualizer
             string inputFile = args[0];
             string outputFile = args[1];
 
-            float spring_multiplier = 1.0F;
+            float spring_multiplier = 2.0F;
             float spring_neutral_distance = 1.0F;
-            float repellant_multiplier = 5.0F;
+            float repellant_multiplier = 1.0F;
             float dampening = 0.1F;
-            int max_iterations = 100000;
+            int max_iterations = 500;
 
             results r = runner(inputFile, outputFile, spring_multiplier, spring_neutral_distance, repellant_multiplier, dampening, max_iterations);
             Console.WriteLine("iterations: {0}, Time: {1}, Ratio: {2}, Mean: {3}, StdDev: {4}", r.iterations, r.runtime, r.stats.EdgeRatio, r.stats.EdgeMean, r.stats.EdgeStdDev);

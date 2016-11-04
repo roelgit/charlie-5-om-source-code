@@ -33,7 +33,17 @@ namespace GraphVisualizer
         public Vector2 vector_to(Node n)
         {
             // todo: memoize?
-            return Vector2.Normalize(this.position - n.position);
+            return n.position - this.position;
+        }
+
+        /// <summary>
+        /// vector to the other node, but normalized
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public Vector2 direction_to(Node n)
+        {
+            return Vector2.Normalize(vector_to(n));
         }
 
         public override string ToString()

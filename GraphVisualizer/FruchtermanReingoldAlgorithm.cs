@@ -9,7 +9,9 @@ namespace GraphVisualizer
 {
     class FruchtermanReingoldAlgorithm : Algorithm
     {
-        protected readonly float spring_multiplier, repellant_multiplier, dampening;
+        protected readonly float spring_multiplier, repellant_multiplier;
+
+        protected float dampening;
         /// <summary>
         /// Amount of steps before stopping
         /// </summary>
@@ -79,8 +81,8 @@ namespace GraphVisualizer
             Random rnd = new Random();
             foreach (Node n in g.nodes)
             {
-                float x = (float)rnd.NextDouble();
-                float y = (float)rnd.NextDouble();
+                float x = (float)rnd.NextDouble() * 25;
+                float y = (float)rnd.NextDouble() * 25;
                 Vector2 pos = new Vector2(x, y);
                 n.position = pos;
             }
@@ -113,22 +115,25 @@ namespace GraphVisualizer
                 Vector2 sum = new Vector2(0, 0);
                 foreach (Node other2 in g.nodes.Where((x) => (x != n && !n.neighbours().Contains(x))))
                 {
-                    other = other2;
-                    direction = other.vector_to(n);
-                    sum += direction * nodeRepellantForce(n, other, k);
+                    direction = other2.direction_to(n);
+                    float magnitude = nodeRepellantForce(n, other2, k);
+                    sum += direction * magnitude;
                 }
 
                 // add the edge forces on this node
                 foreach (Edge e in n.edges())
                 {
                     if (e.left == n) { other = e.right; } else { other = e.left; }
-                    direction = n.vector_to(other);
+                    direction = n.direction_to(other);
 
                     sum += direction * edge_forces[e];
                 }
 
                 // scale the final force
                 node_forces[i] = sum * dampening;
+
+                // reduce the heat by 50%
+                dampening *= 0.975F;
             }
 
             // Squared because we only need one square root at the end this way, making the calculations faster
