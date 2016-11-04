@@ -1,5 +1,6 @@
 \documentclass[a4paper,12pt,twoside]{article}
 \usepackage[english]{babel}
+\usepackage[mathtools]
 
 \begin{document}
 
@@ -22,7 +23,8 @@ This research is focused about the use of graph drawing algorithms, especially t
 There have been carried out several studies which looked at the aspects of how can a graph drawing and the human understanding of a drawn graph be measured \cite{Purchase}. There are certain aesthetic qualities such as the symmetry, number of edge crosses and bends that affect the intelligibility of a graph drawing. During our research we have used a few force-directed graph drawing algorithms combined with various parameters and settings, to find the effect of those parameters on the graphical output of a graph.
 
 \section{Description of the experiments}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+For our research, we implemented the relatively easy Spring algorithm designed by Eades\cite{Eades}. The idea of this algorithm is that each node gets a certain amount of force added to it and this force then moves the node around in a certain direction. This force is recalculated with every new iteration. Every node has its own force and it is calculated by looking at every other node in the graph other than the current one. For every neighbouring node, the ones connected to the current node by an edge, we calculate an attracting force. These edges try to contract and pull the nodes closer together. For every non-neighbouring node, the ones not connected to the current node by an edge, we calculate a repelling force. These nodes try to get away from each-other. This results in a tug of war between nodes. The attractive force is calculated by the following equation.
+
 
 \section{The final results}
 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
@@ -43,6 +45,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 \bibitem{Kawai}T. Kamada and S. Kawai. \emph{An algorithm for drawing general undirected graphs.} Inform. Process. Lett., 31:7–15, 1989.
 \bibitem{Ioannis G Tollis}G. Di Battista, P. Eades, R. Tamassia and I. G Tolli.s \emph{Algorithms for drawing graphs: an annotated bibliography.} Computational Geometry 4 235-282, 1994.
 \bibitem{Purchase}H.C. Purchase, R.F. Cohen and M.I. James. \emph{An Experimental Study of the Basis for Graph Drawing Algorithms.} Springer, Lecture Notes in Computer Science (no. 1027), 1995.
+\bibitem{Eades} insert Eades paper
 \end{thebibliography}
 
 \end{document}
