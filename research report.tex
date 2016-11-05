@@ -38,11 +38,11 @@ f_{final} = c_4 * f_{results}
 \end{equation}
 $c_4$ is once again a predefined constant. This is put in place to make sure that the vertices don't move too chaotically which may result in distorted graphs or it could heavily increase the time it takes until the graph stabilizes.
 \newline
-According to Eades, research has shown that the values $c_1=2$, $c_2=c_3=1$ and $c_4=0.1$ give the best results for most input graphs and that almost all graphs stabilize with $M=100$ where M is the number of iterations.
+According to Eades, research has shown that the values $c_1=2$, $c_2=c_3=1$ and $c_4=0.1$ give the best results for most input graphs and that almost all graphs stabilize with $M=100$ where \emph{M} is the number of iterations.
 \newline
-An analysis of this algorithm shows that every iteration of the algorithm computes the attractive forces in $O(|E|)$ time where E is the collection of edges in the graph since it has to look at every edge in the graph only once in order to calculate the spring forces for both connected vertices. The repulsive forces are calculated between all pairs of vertices and as such, the time it takes to compute this is $O(|V|^2)$. The iterations are run \emph{M} times and so the time complexity of the algorithm is defined as $O(M*(|E| + |V|^2))$.
+An analysis of this algorithm shows that every iteration of the algorithm computes the attractive forces in $O(|E|)$ time where \emph{E} is the collection of edges in the graph since it has to look at every edge in the graph only once in order to calculate the spring forces for both connected vertices. The repulsive forces are calculated between all pairs of vertices and as such, the time it takes to compute this is $O(|V|^2)$ where \emph{V} is the collection of all vertices. The iterations are run \emph{M} times and so the time complexity of the algorithm is defined as $O(M*(|E| + |V|^2))$.
 \subsection{Fruchterman and Reingold}
-As part of our experiment, we also found an extention to the above algorithm designed by Fruchterman and Reingold\cite{FandR}. This extension redefines equations \ref{e:attract} and \ref{e:repel} as follows:
+As part of our experiment, we also found an extension to the above algorithm designed by Fruchterman and Reingold\cite{FandR}. This extension redefines equations \ref{e:attract} and \ref{e:repel} as follows:
 \begin{equation}\label{e:FRattract}
 f_a(d)=\frac{d^2}{k}
 \end{equation}
@@ -57,29 +57,29 @@ In this new equation, \emph{A} is the total area of the graph and \emph{V} is th
 \newline
 This extension of the Spring algorithm increases the number of vertices allowed in a graph up to 40, but this is still a very small amount. The time complexity of the algorithm stays the same as with Eades. It is important to note that the time complexity of the repulsive forces can be decreased by only looking at nearby vertices rather than all vertices in the graph. We did not implement this in our project.
 \subsection{Test-data}
-We have generated our own graphs as input-data with sizes 4, 8 and 16 vertices and with several different set-ups of edges. Some of the test graphs have cycles while others do not. Each of the following descriptions are hypothetical ways in which they can be drawn. Whether our algorithm conforms to this or not will be discussed later in section \ref{s:results}.
+We have generated our own graphs as input-data with sizes 4, 8 and 16 vertices and with several different set-ups of edges.
 \begin{itemize}
 \item For graphs of only 4 vertices, there are not a whole lot of different set-ups that we could make out of this. As such we have created the following set of graphs.
 \begin{itemize}
 \item A graph that is a straight line through all vertices without cycles or branching paths.
 \item A graph that is one circle through all vertices without branches.
-\item A graph where one vertex sits in the middle and connects to all other vertices.
+\item A graph where one vertex connects to all other vertices.
 \item A graph where all vertices are connected to each-other.
 \item A graph that is one circle through all vertices that also contains one extra edge through the middle.
 \end{itemize}
 \item Graphs of 8 vertices are a bit more versatile in the way they can be set-up. We have limited ourselves to 7 different set-ups.
 \begin{itemize}
-\item As with graphs of 4 vertices, the first three test cases are the same, namely a straight line, a big circle and a vertex in the middle connecting to all other vertices.
+\item As with graphs of 4 vertices, the first three test cases are set up to be the same.
 \item A graph with several branching paths and no cycles
 \item A graph containing one cycle and several branching paths.
-\item A graph in the shape of a kite. Four of the vertices all all connected to one another and the other four vertices form a straight line attached to one of the first set of four vertices.
+\item A graph in the shape of a kite. Four of the vertices are all connected to one another and the other four vertices form a straight line attached to the first set of vertices.
 \item Similar to the previous graph, with the difference that one of the edges within the first set of four vertices is left out.
 \end{itemize}
 \item Graphs of 16 nodes open up many different possible layouts of graphs but we have limited ourselves to 6 different set-ups.
 \begin{itemize}
 \item Once again, the first three graphs are the same as in the other two sizes.
 \item As with 8 nodes, we have also added a graph that has several branching paths and contains no cycles.
-\item A graph where one vertex sits in the middle and the other vertices form several cycles that go through this point.
+\item A graph with many cycles that all have one vertex in common.
 \item A graph with many cycles and branching paths
 \end{itemize}
 \end{itemize}
