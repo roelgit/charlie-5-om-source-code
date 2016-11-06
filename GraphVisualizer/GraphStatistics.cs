@@ -21,6 +21,8 @@ namespace GraphVisualizer
 
         public float EdgeStdDev { get; protected set; }
 
+        public double EdgeLenghtTotal { get; protected set; }
+
         /// <summary>
         /// A protected constructor. Don't use this unless you are extending this class. Use GraphStatistics.From instead
         /// </summary>
@@ -61,7 +63,7 @@ namespace GraphVisualizer
 
             // Calculate stuff with edges
             float longest_edge = 0;
-            float shortest_edge = 0;
+            float shortest_edge = 1;
             foreach (Edge e in g.edges)
             {
                 float l = e.Length;
@@ -73,6 +75,7 @@ namespace GraphVisualizer
                 {
                     shortest_edge = l;
                 }
+                stats.EdgeLenghtTotal += l;
             }
             stats.EdgeRatio = longest_edge / shortest_edge;
 

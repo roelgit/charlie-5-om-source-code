@@ -22,8 +22,12 @@ namespace GraphVisualizer
         /// The maximum amount of movement before a graph can be seen as stable
         /// </summary>
         protected float stabilizationThreshold;
+        /// <summary>
+        /// Whether or not to use the stabiliser
+        /// </summary>
+        protected readonly bool UseStabiliser;
 
-        public EadesAlgorithm(float spring_multiplier, float spring_neutral_distance, float repellant_multiplier, float dampening, int M, float stabilizationThreshold)
+        public EadesAlgorithm(float spring_multiplier, float spring_neutral_distance, float repellant_multiplier, float dampening, int M, float stabilizationThreshold, bool useStabiliser)
         {
             this.spring_multiplier = spring_multiplier;
             this.spring_neutral_distance = spring_neutral_distance;
@@ -31,6 +35,7 @@ namespace GraphVisualizer
             this.dampening = dampening;
             this.M = M;
             this.stabilizationThreshold = stabilizationThreshold;
+            this.UseStabiliser = useStabiliser;
         }
 
         protected virtual float springStrength(float length)
@@ -109,7 +114,7 @@ namespace GraphVisualizer
                 totalForceLengthSquared += node_forces[i].LengthSquared();
             }
 
-            return Math.Sqrt(totalForceLengthSquared) < stabilizationThreshold ||  ++stepsDone >= M;
+            return (Math.Sqrt(totalForceLengthSquared) < stabilizationThreshold && UseStabilizer) ||  ++stepsDone >= M;
         }
     }
 }
