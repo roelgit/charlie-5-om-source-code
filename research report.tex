@@ -1,5 +1,6 @@
 \documentclass[a4paper,12pt,twoside]{article}
 \usepackage[english]{babel}
+\usepackage{mathtools}
 
 \begin{document}
 
@@ -7,24 +8,83 @@
 \author{Group Charlie-5: Jeroen Hoegen Dijkhof \and Roxanne Giling \and Laurens Post}
 \maketitle
 \begin{abstract}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin posuere leo sed enim congue, vel dignissim justo pharetra. Curabitur eleifend interdum quam, eget ultrices sem ornare nec. Vivamus posuere sapien nec posuere aliquet.
+Force-directed graph drawing is a useful tool for displaying graphs in a neat and readable way. In this paper we will describe the research we have done, the algorithm we have used for testing, what we tested exactly and what the results of these tests were.
 \end{abstract}
 \newpage
 
-\tableofcontents
-\newpage
-
 \section{Introduction}\label{s:Introduction}
-Force-directed graph drawing has been one of the most flexible and widely used algorithms out there since 1963 with one of the first versions being that of ~Tutte~\cite{Tutte}. These algorithms are used to represent graphs so that they are pleasing to look at. This is done by spacing out the vertices from each-other so that they are clearly visible as separate nodes, but they are also not too spaced out to avoid the resulting image being too big. The algorithms are based on the idea of springs or magnets in that each node has both a repulsive as well as an attractive force pulling and pushing on them. Ideally, this makes two nodes spaced out in such a way that these two forces hang in balance with each-other. As a graph grows in size, so does its complexity. Lines may cross with one-another or connected nodes may find themselves stretched out on either side of the initial graph. In our research we have found several different versions in order to handle this increase in complexity, each with their own ideas on how to compute these two forces. Tutte as mentioned above uses a graph's Barycentric representation while others, such as that of Kamada and ~Kawai~\cite{Kawai}, use the theoretic distances of paths in the graph from one node to another in order to compute their spring forces.
-
-\section{Description of the research}
-This research is focused about the use of graph drawing algorithms, especially the force-directed methods. Various methods have been researched to give a graphical presentation of a graph \cite{Ioannis G Tollis}. Other graph drawing methods such as the orthogonal and tree layouts are beyond our research scope. We intend to discover the influences of certain variables, parameters and details when using force-directed graph drawing algorithms. This with the purpose to get the “best” visual graphical representation of a given graph. During our research we wanted to find out what makes a graph drawing the best and how can this be measured.\newline
-There have been carried out several studies which looked at the aspects of how can a graph drawing and the human understanding of a drawn graph be measured \cite{Purchase}. There are certain aesthetic qualities such as the symmetry, number of edge crosses and bends that affect the intelligibility of a graph drawing. During our research we have used a few force-directed graph drawing algorithms combined with various parameters and settings, to find the effect of those parameters on the graphical output of a graph.
+Force-directed graph drawing has been one of the most flexible and widely used algorithms out there since 1963 with one of the first versions being that of ~Tutte~\cite{Tutte}. These algorithms are used to represent graphs so that they are pleasing to look at. This is done by spacing out the vertices from each-other so that they are clearly visible as separate vertices, but they are also not too spaced out to avoid the resulting image being too big. The algorithms are based on the idea of springs or magnets in that each vertex has both a repulsive as well as an attractive force pulling and pushing on them. Ideally, this makes two vertices spaced out in such a way that these two forces hang in balance with each-other. As a graph grows in size, so does its complexity. Lines may cross with one-another or connected vertices may find themselves stretched out on either side of the initial graph. In our research we have found several different versions in order to handle this increase in complexity, each with their own ideas on how to compute these two forces. Tutte as mentioned above uses a graph's Barycentric representation while others, such as that of Kamada and ~Kawai~\cite{Kawai}, use the theoretic distances of paths in the graph from one vertex to another in order to compute their spring forces. We have gotten most of our information from Kobourov\cite{Kobourov}, including the algorithm that we ended up using as described below in section \ref{s:algorithm}.
 
 \section{Description of the experiments}
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+As stated above, our research took us through many different versions of force directed graph drawing and there were many different kinds of results that we could go for. Below we will describe what we used exactly, how we used it and what kinds of results we wanted to receive as output data.
+\subsection{The algorithm used}\label{s:algorithm}
+For our research, we implemented the relatively simple Spring algorithm designed by Eades\cite{Eades}. It is an algorithm designed to be used on graphs consisting of at most 30 vertices. The idea of this algorithm is that each vertex gets a certain amount of force added to it and this force then moves the vertex around in a certain direction. This force is recalculated with every new iteration. Every vertex has its own force and it is calculated by looking at every other vertex in the graph other than the current one. For every neighbouring vertex, the ones connected to the current vertex by an edge, we calculate an attracting force. These edges try to contract and pull the vertices closer together. For every vertex other than the current vertex we calculate a repelling force. These vertices try to get away from each-other. This results in a tug of war between vertices. 
+\newline
+The attractive force is calculated by the following equation.
+\begin{equation}\label{e:attract}
+f_a = c_1*log(\frac{d}{c_2})
+\end{equation}
+In this equation, \emph{d} is the length of the edge between the current vertex and its neighbouring vertex that we are looking it and \emph{$c_1$} and \emph{$c_2$} are constants.
+\newline
+The repelling force is calculated by the following equation.
+\begin{equation}\label{e:repel}
+f_r = \frac{c_3}{d^2}
+\end{equation}
+Once again, \emph{d} is the distance between the pair of vertices we are currently looking at and \emph{$c_3$} is a constant. With these two equations in place, we can see that the logarithmic attractive force stands opposite the quadratic repelling force. This should in theory result in a graph where these two forces are balanced with each-other.
+\newline
+After we have calculated all forces that apply to the current vertex using equations \ref{e:attract} and \ref{e:repel}, we add them all up and we are left with a vector that pushes a vertex in a certain direction with a certain velocity, depending on the outcome. This result however may be too strong and so we add a final equation.
+\begin{equation}\label{e:damper}
+f_{final} = c_4 * f_{results}
+\end{equation}
+$c_4$ is once again a predefined constant. This is put in place to make sure that the vertices don't move too chaotically which may result in distorted graphs or it could heavily increase the time it takes until the graph stabilizes.
+\newline
+According to Eades, research has shown that the values $c_1=2$, $c_2=c_3=1$ and $c_4=0.1$ give the best results for most input graphs and that almost all graphs stabilize with $M=100$ where \emph{M} is the number of iterations.
+\newline
+An analysis of this algorithm shows that every iteration of the algorithm computes the attractive forces in $O(|E|)$ time where \emph{E} is the collection of edges in the graph since it has to look at every edge in the graph only once in order to calculate the spring forces for both connected vertices. The repulsive forces are calculated between all pairs of vertices and as such, the time it takes to compute this is $O(|V|^2)$ where \emph{V} is the collection of all vertices. The iterations are run \emph{M} times and so the time complexity of the algorithm is defined as $O(M*(|E| + |V|^2))$.
+\subsection{Fruchterman and Reingold}
+As part of our experiment, we also found an extension to the above algorithm designed by Fruchterman and Reingold\cite{FandR}. This extension redefines equations \ref{e:attract} and \ref{e:repel} as follows:
+\begin{equation}\label{e:FRattract}
+f_a(d)=\frac{d^2}{k}
+\end{equation}
+\begin{equation}\label{e:FRrepel}
+f_r(d)=-\frac{k^2}{d}
+\end{equation}
+much like in the previous versions of these equations, \emph{d} is once again the distance between the pair of vertices currently looked at. The variable \emph{k} is defined as the optimal distance between the two vertices within the current graph. It is calculated as follows:
+\begin{equation}\label{e:optimalD}
+k=C*\sqrt{\frac{A}{|V|}}
+\end{equation}
+In this new equation, \emph{A} is the total area of the graph and \emph{V} is the collection of vertices within the graph. \emph{C} is defined as the temperature of the graph. Fruchterman and Reingold describe this as a way to control the displacement of vertices. If the graph is highly suboptimal, the temperature is high and this allows the vertices to keep moving. As the graph layout approaches an optimal layout, this temperature is decreased and as such, the vertices move slower and slower until they eventually come to a complete stand still. This approach is based on the idea of simulated annealing.
+\newline
+This extension of the Spring algorithm increases the number of vertices allowed in a graph up to 40, but this is still a very small amount. The time complexity of the algorithm stays the same as with Eades. It is important to note that the time complexity of the repulsive forces can be decreased by only looking at nearby vertices rather than all vertices in the graph. We did not implement this in our project.
+\subsection{Test-data}
+We have generated our own graphs as input-data with sizes 4, 8 and 16 vertices and with several different set-ups of edges.
+\begin{itemize}
+\item For graphs of only 4 vertices, there are not a whole lot of different set-ups that we could make out of this. As such we have created the following set of graphs.
+\begin{itemize}
+\item A graph that is a straight line through all vertices without cycles or branching paths.
+\item A graph that is one circle through all vertices without branches.
+\item A graph where one vertex connects to all other vertices.
+\item A graph where all vertices are connected to each-other.
+\item A graph that is one circle through all vertices that also contains one extra edge through the middle.
+\end{itemize}
+\item Graphs of 8 vertices are a bit more versatile in the way they can be set-up. We have limited ourselves to 7 different set-ups.
+\begin{itemize}
+\item As with graphs of 4 vertices, the first three test cases are set up to be the same.
+\item A graph with several branching paths and no cycles
+\item A graph containing one cycle and several branching paths.
+\item A graph in the shape of a kite. Four of the vertices are all connected to one another and the other four vertices form a straight line attached to the first set of vertices.
+\item Similar to the previous graph, with the difference that one of the edges within the first set of four vertices is left out.
+\end{itemize}
+\item Graphs of 16 nodes open up many different possible layouts of graphs but we have limited ourselves to 6 different set-ups.
+\begin{itemize}
+\item Once again, the first three graphs are the same as in the other two sizes.
+\item As with 8 nodes, we have also added a graph that has several branching paths and contains no cycles.
+\item A graph with many cycles that all have one vertex in common.
+\item A graph with many cycles and branching paths
+\end{itemize}
+\end{itemize}
 
-\section{The final results}
+\section{The final results}\label{s:results}
 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
 \section{Discussion and conclusion}
@@ -39,10 +99,11 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit.\subsection{Difficulties
 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
 \begin{thebibliography}{99}
-\bibitem{Tutte}William T. Tutte. \emph{How to draw a graph.} Proc. London Math. Society, 13(52):743–768, 1963.
-\bibitem{Kawai}T. Kamada and S. Kawai. \emph{An algorithm for drawing general undirected graphs.} Inform. Process. Lett., 31:7–15, 1989.
-\bibitem{Ioannis G Tollis}G. Di Battista, P. Eades, R. Tamassia and I. G Tolli.s \emph{Algorithms for drawing graphs: an annotated bibliography.} Computational Geometry 4 235-282, 1994.
-\bibitem{Purchase}H.C. Purchase, R.F. Cohen and M.I. James. \emph{An Experimental Study of the Basis for Graph Drawing Algorithms.} Springer, Lecture Notes in Computer Science (no. 1027), 1995.
+\bibitem{Tutte}William T. Tutte, \emph{How to draw a graph.}, Proc. London Math. Society, 13(52):743–768, 1963.
+\bibitem{Kawai}T. Kamada and S. Kawai, \emph{An algorithm for drawing general undirected graphs.}, Inform. Process. Lett., 31:7–15, 1989.
+\bibitem{Kobourov}S. G. Kobourov, \emph{Force-Directed Drawing Algorithms}, In Roberto Tamassia (editor), \emph{Handbook of Graph Drawing and Visualization}, p. 383-408, CRC Press, 2013
+\bibitem{Eades} Peter Eades, \emph{A heuristic for graph drawing.}, Congressus Numerantium, 42:149–160, 1984.
+\bibitem{FandR}T. Fruchterman and E. Reingold, \emph{Graph drawing by force-directed place-ment.}, Softw. – Pract. Exp., 1991.
 \end{thebibliography}
 
 \end{document}
