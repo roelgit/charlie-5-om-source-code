@@ -109,7 +109,7 @@ namespace GraphVisualizer
                 totalForceLengthSquared += node_forces[i].LengthSquared();
             }
 
-            return Math.Sqrt(totalForceLengthSquared) < stabilizationThreshold ||  ++stepsDone >= M;
+            return (Math.Sqrt(totalForceLengthSquared) < stabilizationThreshold && false) ||  ++stepsDone >= M;
         }
     }
 }

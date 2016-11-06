@@ -32,12 +32,16 @@ namespace GraphVisualizer
                 case 4:
                     EdgeLengthVsC3();
                     break;
+                case 5:
+                    EadesVsFruchtmanReingold();
+                    break;
                 default:
                     Console.Error.WriteLine("Warning: no or invalid test case provided, running all test cases");
                     RuntimeVsVertices();
                     RuntimeVsIterations();
                     EdgeLengthVsC1();
                     EdgeLengthVsC3();
+                    EadesVsFruchtmanReingold();
                     break;
             }
             return;
@@ -139,18 +143,19 @@ namespace GraphVisualizer
 
         private static void RuntimeVsIterations(int MAX_ITERATIONS = 40000, float spring_multiplier = 1.0f, float spring_neutral_distance = 1.0f, float repellant_multiplier = 1.0f, float dampening = 1.0f)
         {
+            //var outputStream = new System.IO.StreamWriter(new System.IO.FileInfo("RuntimeVsIterations_" + new System.IO.FileInfo(filename).Name + ".csv").OpenWrite());
+            var outputStream = new System.IO.StreamWriter(new System.IO.FileInfo("RuntimeVsIterations.csv").OpenWrite());
+            outputStream.WriteLine(PrintCSV(new String[] { "Iterations", "Runtime" }));
             foreach (var filename in TestFilePaths())
             {
-                var outputStream = new System.IO.StreamWriter(new System.IO.FileInfo("RuntimeVsIterations_" + new System.IO.FileInfo(filename).Name + ".csv").OpenWrite());
-                outputStream.WriteLine(PrintCSV(new String[] { "Iterations", "Runtime" }));
                 for (int iterations = 1; iterations < MAX_ITERATIONS; iterations += 1000)
                 {
                     var results = runner(filename, null, spring_multiplier, spring_neutral_distance, spring_multiplier, dampening, iterations);
                     outputStream.WriteLine(PrintCSV(new String[] { "" + iterations, "" + results.runtime }));
-                    Console.Write("{0} Iterations: {1}\r", filename, results.iterations);
+                    Console.Write("RuntimeVsIterations: {0} Iterations: {1}\r", filename, results.iterations);
                 }
-                outputStream.Close();
             }
+            outputStream.Close();
         }
 
         private static void RuntimeVsVertices(float spring_multiplier = 1.0f, float spring_neutral_distance = 1.0f, float repellant_multiplier = 1.0f, float dampening = 1.0f)
@@ -163,7 +168,7 @@ namespace GraphVisualizer
             {
                 var results = runner(filename, null, spring_multiplier, spring_neutral_distance, spring_multiplier, dampening, iterations);
                 outputStream.WriteLine(PrintCSV(new String[] { "" + results.graph.nodes.Count, "" + results.runtime }));
-                Console.Write("{0} Vertices: {1}\r", filename, results.graph.nodes.Count);
+                Console.Write("RuntimeVsVertices: {0} Vertices: {1}\r", filename, results.graph.nodes.Count);
             }
             outputStream.Close();
         }
@@ -175,18 +180,19 @@ namespace GraphVisualizer
             float precision = 0.01f;
             float minC1 = 0.01f;
             float maxC1 = 1.00f;
-
+            //var outputStream = new System.IO.StreamWriter(new System.IO.FileInfo("EdgeLengthVsC1_" + new System.IO.FileInfo(filename).Name + ".csv").OpenWrite());\
+            var outputStream = new System.IO.StreamWriter(new System.IO.FileInfo("EdgeLengthVsC1.csv").OpenWrite());
+            outputStream.WriteLine(PrintCSV(new String[] { "C3", "TotalEdgeLength", "EdgeMean", "EdgeRatio", "EdgeStdDev" }));
             foreach (var filename in TestFilePaths())
             {
-                var outputStream = new System.IO.StreamWriter(new System.IO.FileInfo("EdgeLengthVsC1_" + new System.IO.FileInfo(filename).Name + ".csv").OpenWrite());
-                outputStream.WriteLine(PrintCSV(new String[] { "C3", "EdgeMean", "EdgeRatio", "EdgeStdDev"}));
-
                 for(float c1 = minC1; c1 <= maxC1; c1+=precision)
                 {
                     var results = runner(filename, null, c1, spring_neutral_distance, repellant_multiplier, dampening, iterations);
-                    outputStream.WriteLine(PrintCSV(new String[] { c1+"", results.stats.EdgeMean + "", results.stats.EdgeRatio + "", results.stats.EdgeStdDev + ""}));
+                    outputStream.WriteLine(PrintCSV(new String[] { c1+"", results.stats.EdgeLenghtTotal+"" ,results.stats.EdgeMean + "", results.stats.EdgeRatio + "", results.stats.EdgeStdDev + ""}));
+                    Console.Write("EdgeLengthVsC1: {0} C1={1}\r", filename, c1);
                 }
             }
+            outputStream.Close();
         }
 
         private static void EdgeLengthVsC3(float spring_multiplier = 1.0f, float spring_neutral_distance = 1.0f, float dampening = 1.0f)
@@ -197,17 +203,21 @@ namespace GraphVisualizer
             float minC3 = 0.01f;
             float maxC3 = 1.00f;
 
+            //var outputStream = new System.IO.StreamWriter(new System.IO.FileInfo("EdgeLengthVsC3_" + new System.IO.FileInfo(filename).Name + ".csv").OpenWrite());
+            var outputStream = new System.IO.StreamWriter(new System.IO.FileInfo("EdgeLengthVsC3.csv").OpenWrite());
+            outputStream.WriteLine(PrintCSV(new String[] { "C3", "TotalEdgeLength", "EdgeMean", "EdgeRatio", "EdgeStdDev" }));
             foreach (var filename in TestFilePaths())
             {
-                var outputStream = new System.IO.StreamWriter(new System.IO.FileInfo("EdgeLengthVsC3_" + new System.IO.FileInfo(filename).Name + ".csv").OpenWrite());
-                outputStream.WriteLine(PrintCSV(new String[] { "C3", "EdgeMean", "EdgeRatio", "EdgeStdDev" }));
 
                 for (float c3 = minC3; c3 <= maxC3; c3 += precision)
                 {
                     var results = runner(filename, null, spring_multiplier, spring_neutral_distance, c3, dampening, iterations);
-                    outputStream.WriteLine(PrintCSV(new String[] { c3 + "", results.stats.EdgeMean + "", results.stats.EdgeRatio + "", results.stats.EdgeStdDev + "" }));
+                    outputStream.WriteLine(PrintCSV(new String[] { c3 + "", results.stats.EdgeLenghtTotal + "", results.stats.EdgeMean + "", results.stats.EdgeRatio + "", results.stats.EdgeStdDev + "" }));
+                    Console.Write("EdgeLengthVsC3: {0} C3={1}\r",filename, c3);
                 }
             }
+
+            outputStream.Close();
         }
 
         private static void EadesVsFruchtmanReingold(float spring_multiplier = 1.0f, float spring_neutral_distance = 1.0f, float C = 1f, float repellant_multiplier = 1.0f, float dampening = 1.0f)
@@ -229,6 +239,7 @@ namespace GraphVisualizer
                 var resultsFR = runner(l.load(filename), null, fruchmanReingold);
 
                 outputStream.WriteLine(PrintCSV(new String[] { "" + resultsEades.iterations, "" + resultsFR.iterations }));
+                Console.Write("EadesVsFruchtmanReingold: {0}\r", filename);
             }
             outputStream.Close();
         }
