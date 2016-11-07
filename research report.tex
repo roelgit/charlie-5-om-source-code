@@ -1,39 +1,40 @@
-\documentclass[a4paper,12pt,twoside]{article}
+\documentclass[a4paper,12pt]{article}
 \usepackage[english]{babel}
 \usepackage{mathtools}
 
 \begin{document}
 
-\title{Force Directed Graph Drawing algorithms}
-\author{Group Charlie-5: Jeroen Hoegen Dijkhof \and Roxanne Giling \and Laurens Post}
+\title{Force Directed Graph Drawing algorithms\\ \bigskip \large{Group Charlie-5}}
+\author{Jeroen Hoegen Dijkhof \and Roxanne Giling \and Laurens Post}
 \maketitle
 \begin{abstract}
-Force-directed graph drawing is a useful tool for displaying graphs in a neat and readable way. In this paper we will describe the research we have done, the algorithm we have used for testing, what we tested exactly and what the results of these tests were.
+Force-directed graph drawing is a useful method to display graphs in an ordered and readable way. In this paper we will describe our analysis of the impact of several variables of the Eades algorithm and compare its runtime and practical time complexity with the Fruchterman and Reingold algorithm.
 \end{abstract}
 \newpage
 
 \section{Introduction}\label{s:Introduction}
-A graph as we know it in the world of computer science consists of a set of vertices, also more commonly refered to as nodes and a set of edges connecting these vertices\cite{Graph}. This could be used to represent several things ranging from relationships between friends to connections between servers and clients. As humans we can draw such a graph on paper and make them easy and intuitive to read. For a computer, this is not as simple and thus there exists an algorithm in order to achieve this: Force-directed graph drawing. It has been one of the most flexible and widely used algorithms out there since 1963 with one of the first versions being that of ~Tutte~\cite{Tutte}. These algorithms are used to represent graphs so that they are pleasing to look at. This is done by spacing out the vertices from each-other so that they are clearly visible as separate vertices, but they are also not too spaced out to avoid the resulting image being too big. The algorithms are based on the idea of springs or magnets in that each vertex has both a repulsive as well as an attractive force pulling and pushing on them. Ideally, this makes two vertices spaced out in such a way that these two forces hang in balance with each-other. As a graph grows in size, so does its complexity. Lines may cross with one-another or connected vertices may find themselves stretched out on either side of the initial graph. In our research we have found several different versions in order to handle this increase in complexity, each with their own ideas on how to compute these two forces. Tutte as mentioned above uses a graph's Barycentric representation while others, such as that of Kamada and ~Kawai~\cite{Kawai}, use the theoretic distances of paths in the graph from one vertex to another in order to compute their spring forces. We have gotten most of our information from Kobourov\cite{Kobourov}, including the algorithm that we ended up using as described below in section \ref{s:algorithm}.
+A graph as we know it in the world of computer science consists of a set of vertices (more commonly referred to as nodes) and a set of edges connecting these vertices\cite{Graph}. A graph can be used to represent several things, ranging from relationships between friends to connections between servers and their clients. Humans are able to draw such a graph on paper while making it easy and intuitive to read without many difficulties. For a computer, this is not as simple and thus there exists various algorithms which attempt to achieve this. A well known method is Force-directed graph drawing. It has been one of the most flexible and widely used algorithms since its invention in 1963, with one of the first versions being that of ~Tutte~\cite{Tutte}. These algorithms attempt to represent graphs in an aesthetically pleasing way. This is done by spacing out the vertices from each other (they must be clearly visible as separate vertices), but keeping related vertices together and attempting to reduce the total area covered by the resulting image. The algorithms are based on the idea of physical springs and magnets in that each vertex has both a repulsive as well as an attractive force pulling and pushing on them. Ideally, this makes two vertices spaced out in such a way that these two forces are in balance with each other. As a graph grows in size, so does its complexity. Lines may cross with one another or connected vertices may find themselves stretched out on either side of the initial graph. In our research we have discovered a variety of algoritms, each with their own ideas on how to compute these two forces and how to handle this increase in complexity. Tutte, as mentioned above, uses a graph's Barycentric representation while others, such as that of Kamada and ~Kawai~\cite{Kawai}, use the theoretic distances of paths in the graph from one vertex to another in order to compute their spring forces. We have gotten most of our information from Kobourov\cite{Kobourov}, including the algorithm that we ended up using as described below in section \ref{s:algorithm}.
 
 \section{Research question}\label{s:question}
-We soon found the algorithm that we wanted to work with. Namely that of Eades. This algorithm was designed in the year 1984. The algorithm has limits and (after Eades' research) predetermined constants. Since then we have of course enjoyed a lot of improvements in the speed of our computers. Our research question is thus as follows: Is the research done for the Eades algorithm still relevant to today's standard in technology? In order to answer this question we have divided this question up into sub-questions:
+Eades' 1984 algorithm\cite{Eades} is relatively easy to implement, but the paper mentions limits to it's suitability for larger data sets and notes several predetermined constants. A lot has changed in computer science since 1984. Our research question is thus as follows: Is the research done for the Eades algorithm still relevant to today's standard in technology? In order to answer this question we have divided this question up into sub-questions:
 \begin{itemize}
 \item What happens if we change up some of the constants of the algorithm?
 \item What happens when we increase the number of vertices in the graph?
+\item How does this behaviour compare to other algorithms?
 \end{itemize}
 
 \section{Description of the experiments}
-As stated above, our research took us through many different versions of force directed graph drawing and there were many different kinds of results that we could go for. Below we will describe what we used exactly, how we used it and what kinds of results we wanted to receive as output data.
-\subsection{The algorithm used}\label{s:algorithm}
-For our research, we implemented the relatively simple Spring algorithm designed by Eades\cite{Eades} in the C\# language. It is an algorithm designed to be used on graphs consisting of at most 30 vertices. The idea of this algorithm is that each vertex starts out in a randomised position in the field. Then it loops through each individual vertex and adds a certain amount of force to it. This force then moves the vertex around in a certain direction. This force is recalculated with every new iteration. Every vertex has its own force and it is calculated by looking at every other vertex in the graph other than the current one. For every neighbouring vertex, the ones connected to the current vertex by an edge, we calculate an attracting force. These edges try to contract and pull the vertices closer together. This spring force is based on Hookes Law\cite{Hooke} which states that spring force is dependent on distance. For every vertex other than the current vertex we calculate a repelling force. These vertices try to get away from each-other. This results in a tug of war between vertices. 
+As stated above, a wide variety of algoritms exist. To clarify exactly which variant we will study, we shall first describe what we used exactly, how we used it and what kinds of results we wanted to receive as output data.
+\subsection{Eades' Algorithm}\label{s:algorithm}
+For our research, we implemented the relatively simple Spring algorithm designed by Eades in the C\# language. It is an algorithm designed to be used on graphs consisting of at most 30 vertices. The idea of this algorithm is that each vertex starts out in a randomised position in the field. Then it loops through the list of vertices and adds a certain amount of force to each vertex. This force, recalculated with every new iteration, moves the vertex around. To calculate this force, one first loops over every other vertex in the graph. For every neighbouring vertex (the ones connected to the current vertex by an edge), we calculate an attracting force. These edges try to contract and pull the vertices closer together. This spring force is based on Hookes Law\cite{Hooke} which states that spring force is dependent on distance. For every non-neighbouring vertex we calculate a repelling force. These vertices try to get away from each-other. This results in a tug-of-war between vertices.
 \newline
-The attractive force is calculated by the following equation.
+The attractive force is calculated by the following equation:
 \begin{equation}\label{e:attract}
 f_a = c_1*log(\frac{d}{c_2})
 \end{equation}
-In this equation, \emph{d} is the length of the edge between the current vertex and its neighbouring vertex that we are looking it and \emph{$c_1$} and \emph{$c_2$} are constants.
+In this equation, \emph{d} is the length of the edge between the current vertex and its neighbouring vertex that we are looking it and \emph{$c_1$} and \emph{$c_2$} are constants. Note that there is no need to have a repelling force between two vertices connected by an edge, as the springs will repel when over-compressed, i.e., when $d < c_2$.
 \newline
-The repelling force is calculated by the following equation.
+The repelling force is calculated by the following equation:
 \begin{equation}\label{e:repel}
 f_r = \frac{c_3}{d^2}
 \end{equation}
@@ -54,7 +55,7 @@ As part of our experiment, we also found an extension to the above algorithm des
 f_a(d)=\frac{d^2}{k}
 \end{equation}
 \begin{equation}\label{e:FRrepel}
-f_r(d)=-\frac{k^2}{d}
+f_r(d)=\frac{k^2}{d}
 \end{equation}
 much like in the previous versions of these equations, \emph{d} is once again the distance between the pair of vertices currently looked at. The variable \emph{k} is defined as the optimal distance between the two vertices within the current graph. It is calculated as follows:
 \begin{equation}\label{e:optimalD}
@@ -63,8 +64,8 @@ k=C*\sqrt{\frac{A}{|V|}}
 In this new equation, \emph{A} is the total area of the graph and \emph{V} is the collection of vertices within the graph. \emph{C} is defined as the temperature of the graph. Fruchterman and Reingold describe this as a way to control the displacement of vertices. If the graph is highly suboptimal, the temperature is high and this allows the vertices to keep moving. As the graph layout approaches an optimal layout, this temperature is decreased and as such, the vertices move slower and slower until they eventually come to a complete stand still. This approach is based on the idea of simulated annealing.
 \newline
 This extension of the Spring algorithm increases the number of vertices allowed in a graph up to 40, but this is still a very small amount. The time complexity of the algorithm stays the same as with Eades. It is important to note that the time complexity of the repulsive forces can be decreased by only looking at nearby vertices rather than all vertices in the graph. We did not implement this in our project.
-\subsection{Test-data}
-We have generated our own graphs as input-data with sizes 4, 8 and 16 vertices and with several different set-ups of edges. Each of these graphs are two-dimensional and undirected.
+\subsection{Test data}
+We have generated our own graphs as input data with sizes 4, 8 and 16 vertices and with several different set-ups of edges. Each of these graphs are two-dimensional and undirected.
 \begin{itemize}
 \item For graphs of only 4 vertices, there are not a whole lot of different set-ups that we could make out of this. As such we have created the following set of graphs.
 \begin{itemize}
@@ -94,9 +95,9 @@ Other than these self-generated test data, we have also decided to use graphs fr
 \subsection{Output data}
 As output data, we get optimised graphs of course, but in order to answer our subquestions, we wanted more than just that. As such, we have added in a Stopwatch in order to measure the runtime. Since the stopwatch class in C\# is dependent on the pc that it is run on, we can never truly be exact. Thus we execute the program on a given graph several times and take the average time based on the results.Furthermore, we take into consideration the average edge-length and the number of iterations until stabilization.
 
-\section{The final results}\label{s:results}
+\section{Results}\label{s:results}
 
-\subsection{hypotheses}
+\subsection{Hypotheses}
 We have devised several hypotheses based on our subquestions mentioned in section \ref{s:question}. The first two hypotheses are based on the runtime of the algorithm. How does it scale up to today's standards? They are as follows.
 \begin{itemize}
 \item The runtime of the algorithm increases linearly as the number of iterations increases. This implies that each iteration computes in roughly the same amount of time.
