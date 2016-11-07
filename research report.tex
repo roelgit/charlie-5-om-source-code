@@ -66,16 +66,21 @@ k=C*\sqrt{\frac{A}{|V|}}
 In this new equation, \emph{A} is the total area of the graph and \emph{V} is the collection of vertices within the graph. \emph{C} is defined as the temperature of the graph. Fruchterman and Reingold describe this as a way to control the displacement of vertices. If the graph is highly suboptimal, the temperature is high and this allows the vertices to keep moving. As the graph layout approaches an optimal layout, this temperature is decreased and as such, the vertices move slower and slower until they eventually come to a complete stand still. This approach is based on the idea of simulated annealing.
 \newline
 This extension of the Spring algorithm increases the number of vertices allowed in a graph up to 40, but this is still a very small amount. The time complexity of the algorithm stays the same as with Eades. It is important to note that the time complexity of the repulsive forces can be decreased by only looking at nearby vertices rather than all vertices in the graph. We did not implement this in our project.
-\subsection{Test-data}
-We have generated our own graphs as input-data with sizes 4, 8 and 16 vertices and with several different set-ups of edges. Each of these graphs are two-dimensional and undirected. We have also decided to use graphs from an internet database. These we could not describe here since they are fairly large and would take too much time for us to sift through it all. The database can be found here\cite{Database}.
+\subsection{Test data}
+We have generated our own graphs as input data with sizes 4, 8 and 16 vertices and with several different set-ups of edges. Each of these graphs are two-dimensional and undirected. We have also decided to use graphs from an internet database. These we could not describe here since they are fairly large and would take too much time for us to sift through it all. The database can be found here\cite{Database}.
 \subsection{Output data}
 As output data, we get optimised graphs of course, but in order to answer our subquestions, we wanted more than just that. As such, we have added in a Stopwatch in order to measure the runtime. Since the stopwatch class in C\# is dependent on the pc that it is run on, we can never truly be exact. Thus we execute the program on a given graph several times and take the average time based on the results.Furthermore, we take into consideration the average edge-length and the number of iterations until stabilization.
 
-\section{The final results}\label{s:results}
+\section{Results}\label{s:results}
 Our results were interesting and proved some of our hypotheses right while proving others wrong. We continuously used 5 tests per different variable setting.
 \begin{itemize}
 \item We hypothesised that the runtime of the algorithm increases linearly as the number of iterations increases. This implies that each iteration computes in roughly the same amount of time.
-\item We hypothesises that the runtime of the algorithm increases quadratically as the number of input vertices increases.
+\item We hypothesises that the runtime of the algorithm increases quadratically as the number of input vertices increases. This has been proven mostly true. As shown in the figure below, both F\&R and Eames are a good fit, with Coëfficients of Determination above 0.95. Furthermore, a two-tailed, paired-samples t-test shows that the runtime values are clearly unrelated with $p = 3.8 * 10^{-17}$. Interestingly, Eames shows $O(n^3)$-like behaviour, whereas $O(n^2)$ is expected. F\&R does behave as expected.
+\begin{figure}[h]
+  \centering
+  \includegraphics[height=7cm]{timecomplexity}
+  \label{fig:timecomplexity}
+\end{figure}
 \item We hypothesised that the average edge-length decreases linearly as we decrease the value of $c_1$. This was proven wrong however. We found that the mean increased and we calculated the correlation to be $r=-0.73278$ which is a fairly strong negative correlation. As we can see in figure \ref{fig:graphc1}, this increase does not appear to be linear.
 \begin{figure}[h]
 	\centering
