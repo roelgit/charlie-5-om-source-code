@@ -2,6 +2,7 @@
 \usepackage[english]{babel}
 \usepackage{mathtools}
 \usepackage{graphicx}
+\usepackage[utf8]{inputenc}
 \graphicspath{ {graphs/} }
 
 \begin{document}
@@ -75,7 +76,7 @@ As output data, we get optimised graphs of course, but in order to answer our su
 Our results were interesting and proved some of our hypotheses right while proving others wrong. We continuously used 5 tests per different variable setting.
 \begin{itemize}
 \item We hypothesised that the runtime of the algorithm increases linearly as the number of iterations increases. This implies that each iteration computes in roughly the same amount of time.
-\item We hypothesised that the runtime of the algorithm increases quadratically as the number of input vertices increases. This has been proven mostly true. As shown in the figure below, both F\&R and Eades are a good fit, with Coëfficients of Determination above 0.95. Furthermore, a two-tailed, paired-samples t-test shows that the runtime values are clearly unrelated with $p = 3.8 * 10^{-17}$ with $n = 570$. Interestingly, Eades shows $\mathcal{O}(n^3)$-like behaviour, whereas $\mathcal{O}(n^2)$ is expected. F\&R does behave as expected.
+\item We hypothesised that the runtime of the algorithm increases quadratically as the number of input vertices increases. This has been proven mostly true. As shown in the figure below, both F\&R and Eades are a good fit, with Coefficients of Determination above 0.95. Furthermore, a two-tailed, paired-samples t-test shows that the runtime values are clearly unrelated with $p = 3.8 * 10^{-17}$ with $n = 570$. Interestingly, Eades shows $\mathcal{O}(n^3)$-like behaviour, whereas $\mathcal{O}(n^2)$ is expected. F\&R does behave as expected.
 \begin{figure}[h]
   \centering
   \includegraphics[height=7cm]{timecomplexity}
