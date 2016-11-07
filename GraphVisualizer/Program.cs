@@ -76,11 +76,11 @@ namespace GraphVisualizer
 
             float spring_multiplier = 2.0F;
             float spring_neutral_distance = 1.0F;
-            float repellant_multiplier = 1.0F;
+            float repellant_multiplier = 10.0F;
             float dampening = 0.1F;
-            int max_iterations = 10000;
+            int max_iterations = 250;
 
-            results r = runner(inputFile, outputFile, spring_multiplier, spring_neutral_distance, repellant_multiplier, dampening, max_iterations, true);
+            results r = runner(inputFile, outputFile, spring_multiplier, spring_neutral_distance, repellant_multiplier, dampening, max_iterations, false);
             Console.WriteLine("iterations: {0}, Time: {1}, Ratio: {2}, Mean: {3}, StdDev: {4}", r.iterations, r.runtime, r.stats.EdgeRatio, r.stats.EdgeMean, r.stats.EdgeStdDev);
             System.Console.ReadKey();
 #endif
@@ -116,7 +116,7 @@ namespace GraphVisualizer
 
             float stabilizationThreshold = 0.001f;
 
-            Algorithm a = new EadesAlgorithm(spring_multiplier, spring_neutral_distance, repellant_multiplier, dampening, max_iterations, stabilizationThreshold, stabilise);
+            Algorithm a = new FruchtermanReingoldAlgorithm(spring_multiplier, spring_neutral_distance, repellant_multiplier, max_iterations, stabilizationThreshold, stabilise);
 
             return runner(g, outputFile, a);
         }
@@ -124,11 +124,6 @@ namespace GraphVisualizer
         private static results runner(Graph g, string outputFile, Algorithm a)
         {
             Visualizer v = new Visualizer();
-
-            System.IO.FileInfo fi;
-
-            if (outputFile != null)
-                fi = new System.IO.FileInfo(outputFile);
             int i = 0;
             a.start(g);
             var start = Process.GetCurrentProcess().TotalProcessorTime;
@@ -136,6 +131,11 @@ namespace GraphVisualizer
             while (!a.step(g))
             {
                 i++;
+                if (outputFile != null)
+                {
+                    string s = String.Format("{0}.{1}", outputFile, i);
+                    v.Visualize(g, s);
+                }
             }
             stopwatch.Stop();
             var stop = Process.GetCurrentProcess().TotalProcessorTime;
@@ -269,7 +269,7 @@ namespace GraphVisualizer
         private static void EadesVsFruchtmanReingold(float spring_multiplier = 1.0f, float spring_neutral_distance = 1.0f, float C = 1f, float repellant_multiplier = 1.0f, float dampening = 1.0f)
         {
             float stabilizationThreshold = 0.1f;
-            var fruchmanReingold = new FruchtermanReingoldAlgorithm(spring_multiplier, C, repellant_multiplier, dampening, int.MaxValue, stabilizationThreshold);
+            var fruchmanReingold = new FruchtermanReingoldAlgorithm(spring_multiplier, C, repellant_multiplier, int.MaxValue, stabilizationThreshold, true);
             var eades = new EadesAlgorithm(spring_multiplier, spring_neutral_distance, repellant_multiplier, dampening, int.MaxValue, stabilizationThreshold, true);
 
             var outputStream = new System.IO.StreamWriter(new System.IO.FileInfo("Algorithms.csv").OpenWrite());

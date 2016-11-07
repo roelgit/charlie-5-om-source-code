@@ -81,7 +81,8 @@ namespace GraphVisualizer
             }
 
             // calculate the forces on the nodes
-            for (int i = 0; i < g.nodes.Count; i++) {
+            for (int i = 0; i < g.nodes.Count; i++)
+            {
                 Node n = g.nodes.ElementAt(i);
                 Vector2 sum = new Vector2(0,0);
                 foreach(Node other2 in g.nodes.Where((x)=>(x != n && !n.neighbours().Contains(x))))
@@ -113,7 +114,6 @@ namespace GraphVisualizer
 
                 totalForceLengthSquared += node_forces[i].LengthSquared();
             }
-
             return (Math.Sqrt(totalForceLengthSquared) < stabilizationThreshold && UseStabiliser) ||  ++stepsDone >= M;
         }
     }

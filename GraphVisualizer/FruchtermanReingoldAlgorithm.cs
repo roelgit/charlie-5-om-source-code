@@ -11,7 +11,7 @@ namespace GraphVisualizer
     {
         protected readonly float spring_multiplier, repellant_multiplier;
 
-        protected float dampening;
+        protected float heat;
         /// <summary>
         /// Amount of steps before stopping
         /// </summary>
@@ -28,51 +28,35 @@ namespace GraphVisualizer
         /// The maximum amount of movement before a graph can be seen as stable
         /// </summary>
         protected float stabilizationThreshold;
+        /// <summary>
+        /// Whether or not to use the stabiliser
+        /// </summary>
+        protected readonly bool UseStabiliser;
 
-        public FruchtermanReingoldAlgorithm(float spring_multiplier, float C, float repellant_multiplier, float dampening, int M, float stabilizationThreshold)
+        protected float k;
+
+        protected float frameSize;
+
+        public FruchtermanReingoldAlgorithm(float spring_multiplier, float C, float repellant_multiplier, int M, float stabilizationThreshold, bool useStabilizer)
         {
             this.spring_multiplier = spring_multiplier;
             this.repellant_multiplier = repellant_multiplier;
-            this.dampening = dampening;
             this.M = M;
             this.C = C;
             this.stabilizationThreshold = stabilizationThreshold;
+            this.UseStabiliser = useStabilizer;
+            this.frameSize = 25.0f;
+            this.heat = this.frameSize * 0.1f;
         }
 
-        protected float nodeRepellantForce(Node a, Node b, float k)
+        protected float springStrength(float length)
         {
-            return k == 0 ? 1000 : (a.vector_to(b).LengthSquared() / k);
+            return (length * length) / k;
         }
 
-        protected float springStrength(float length, float k)
+        protected float nodeRepellantForce(Node a, Node b)
         {
-            return -(k * k) / length;
-        }
-
-        protected float calculateArea(Graph g)
-        {
-            float XMin = 0, XMax = 0, YMin = 0, YMax = 0;
-
-            foreach(Node n in g.nodes)
-            {
-                if (XMin > n.position.X)
-                    XMin = n.position.X;
-                if (XMax < n.position.X)
-                    XMax = n.position.X;
-
-                if (YMin > n.position.X)
-                    YMin = n.position.Y;
-                if (YMax < n.position.Y)
-                    YMax = n.position.Y;
-            }
-
-            return (XMax - XMin) * (YMax - YMin);
-        }
-
-        protected float calculateK(Graph g)
-        {
-            var area = calculateArea(g);
-            return C * (float)Math.Sqrt(area / g.nodes.Count);
+            return (k * k) / a.vector_to(b).Length();
         }
 
         public override void start(Graph g)
@@ -81,11 +65,12 @@ namespace GraphVisualizer
             Random rnd = new Random();
             foreach (Node n in g.nodes)
             {
-                float x = (float)rnd.NextDouble() * 25;
-                float y = (float)rnd.NextDouble() * 25;
+                float x = (float)rnd.NextDouble() * (frameSize / 2);
+                float y = (float)rnd.NextDouble() * (frameSize / 2);
                 Vector2 pos = new Vector2(x, y);
                 n.position = pos;
             }
+            this.k = C * (float)Math.Sqrt((frameSize * frameSize) / g.nodes.Count);
         }
 
         public override bool step(Graph g)
@@ -97,13 +82,11 @@ namespace GraphVisualizer
             Vector2 direction;
             Node other;
 
-            var k = calculateK(g);
-
             // calculate the strength of the edges
             for (int i = 0; i < g.edges.Count; i++)
             {
                 Edge e = g.edges.ElementAt(i);
-                float edgeforce = springStrength(e.Length, k);
+                float edgeforce = springStrength(e.Length);
 
                 edge_forces.Add(e, edgeforce);
             }
@@ -113,10 +96,10 @@ namespace GraphVisualizer
             {
                 Node n = g.nodes.ElementAt(i);
                 Vector2 sum = new Vector2(0, 0);
-                foreach (Node other2 in g.nodes.Where((x) => (x != n && !n.neighbours().Contains(x))))
+                foreach (Node other2 in g.nodes.Where((x) => (x != n)))
                 {
                     direction = other2.direction_to(n);
-                    float magnitude = nodeRepellantForce(n, other2, k);
+                    float magnitude = nodeRepellantForce(n, other2);
                     sum += direction * magnitude;
                 }
 
@@ -129,12 +112,16 @@ namespace GraphVisualizer
                     sum += direction * edge_forces[e];
                 }
 
-                // scale the final force
-                node_forces[i] = sum * dampening;
-
-                // reduce the heat by 50%
-                dampening *= 0.975F;
+                // limit the final force
+                if (sum.Length() > heat)
+                {
+                    sum *= heat / sum.Length();
+                }
+                node_forces[i] = sum;
             }
+
+            // reduce the heat
+            heat -= (1.0F / M);
 
             // Squared because we only need one square root at the end this way, making the calculations faster
             double totalForceLengthSquared = 0d;
@@ -145,10 +132,28 @@ namespace GraphVisualizer
                 Node n = g.nodes.ElementAt(i);
                 n.position += node_forces[i];
 
+                // restrain position to frame
+                if (n.position.X < -frameSize)
+                {
+                    n.position.X = -frameSize;
+                }
+                else if (n.position.X > frameSize)
+                {
+                    n.position.X = frameSize;
+                }
+
+                if (n.position.Y < -frameSize)
+                {
+                    n.position.Y = -frameSize;
+                }
+                else if (n.position.Y > frameSize)
+                {
+                    n.position.Y = frameSize;
+                }
+
                 totalForceLengthSquared += node_forces[i].LengthSquared();
             }
-
-            return Math.Sqrt(totalForceLengthSquared) < stabilizationThreshold || ++stepsDone >= M;
+            return (Math.Sqrt(totalForceLengthSquared) < stabilizationThreshold && UseStabiliser) || ++stepsDone >= M;
         }
     }
 }
