@@ -56,10 +56,10 @@ namespace GraphVisualizer
                     break;
                 default:
                     Console.Error.WriteLine("Warning: no or invalid test case provided, running all test cases");
-                    RuntimeVsVertices();
                     RuntimeVsIterations();
                     EdgeLengthVsC1();
                     EdgeLengthVsC3();
+                    RuntimeVsVertices();
                     EadesVsFruchtmanReingold();
                     break;
             }
@@ -190,6 +190,7 @@ namespace GraphVisualizer
                     {
                         var results = runner(filename, null, spring_multiplier, spring_neutral_distance, spring_multiplier, dampening, iteration, true);
                         outputStream.WriteLine(PrintCSV(new String[] { "" + results.iterations, "" + results.runtime }));
+                        outputStream.Flush();
                         Console.Write("RuntimeVsIterations: {0}({1}) Iterations: {2}\r", filename, i, results.iterations);
                     }
                 }
@@ -209,6 +210,7 @@ namespace GraphVisualizer
                     Console.Write("RuntimeVsVertices: {0}({1}) Vertices:         \r", filename, i);
                     var results = runner(filename, null, spring_multiplier, spring_neutral_distance, spring_multiplier, dampening, MaxIterationsPerTest, true);
                     outputStream.WriteLine(PrintCSV(new String[] { "" + results.graph.nodes.Count, "" + results.runtime }));
+                    outputStream.Flush();
                     Console.Write("RuntimeVsVertices: {0}({1}) Vertices: {2}, Time: {3}ms\n", filename, i, results.graph.nodes.Count, results.runtime);
                 }
             }
@@ -231,6 +233,7 @@ namespace GraphVisualizer
                     {
                         var results = runner(filename, null, c1, spring_neutral_distance, repellant_multiplier, dampening, MaxIterationsPerTest, true);
                         outputStream.WriteLine(PrintCSV(new String[] { c1 + "", results.stats.EdgeLenghtTotal + "", results.stats.EdgeMean + "", results.stats.EdgeRatio + "", results.stats.EdgeStdDev + "" }));
+                        outputStream.Flush();
                         Console.Write("EdgeLengthVsC1: {0}({1}) C1={2}\r", filename, i, c1);
                     }
                 }
@@ -255,6 +258,7 @@ namespace GraphVisualizer
                     {
                         var results = runner(filename, null, spring_multiplier, spring_neutral_distance, c3, dampening, MaxIterationsPerTest, true);
                         outputStream.WriteLine(PrintCSV(new String[] { c3 + "", results.stats.EdgeLenghtTotal + "", results.stats.EdgeMean + "", results.stats.EdgeRatio + "", results.stats.EdgeStdDev + "" }));
+                        outputStream.Flush();
                         Console.Write("EdgeLengthVsC3: {0}({1}) C3={2}\r", filename, i, c3);
                     }
                 }
@@ -283,6 +287,7 @@ namespace GraphVisualizer
                     var resultsFR = runner(l.load(filename), null, fruchmanReingold);
 
                     outputStream.WriteLine(PrintCSV(new String[] { "" + resultsEades.iterations, "" + resultsFR.iterations }));
+                    outputStream.Flush();
                     Console.Write("EadesVsFruchtmanReingold: {0}({1})\r", filename, i);
                 }
             }
