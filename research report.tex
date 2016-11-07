@@ -64,51 +64,31 @@ k=C*\sqrt{\frac{A}{|V|}}
 In this new equation, \emph{A} is the total area of the graph and \emph{V} is the collection of vertices within the graph. \emph{C} is defined as the temperature of the graph. Fruchterman and Reingold describe this as a way to control the displacement of vertices. If the graph is highly suboptimal, the temperature is high and this allows the vertices to keep moving. As the graph layout approaches an optimal layout, this temperature is decreased and as such, the vertices move slower and slower until they eventually come to a complete stand still. This approach is based on the idea of simulated annealing.
 \newline
 This extension of the Spring algorithm increases the number of vertices allowed in a graph up to 40, but this is still a very small amount. The time complexity of the algorithm stays the same as with Eades. It is important to note that the time complexity of the repulsive forces can be decreased by only looking at nearby vertices rather than all vertices in the graph. We did not implement this in our project.
-\subsection{Test data}
-We have generated our own graphs as input data with sizes 4, 8 and 16 vertices and with several different set-ups of edges. Each of these graphs are two-dimensional and undirected.
-\begin{itemize}
-\item For graphs of only 4 vertices, there are not a whole lot of different set-ups that we could make out of this. As such we have created the following set of graphs.
-\begin{itemize}
-\item A graph that is a straight line through all vertices without cycles or branching paths.
-\item A graph that is one circle through all vertices without branches.
-\item A graph where one vertex connects to all other vertices.
-\item A graph where all vertices are connected to each-other.
-\item A graph that is one circle through all vertices that also contains one extra edge through the middle.
-\end{itemize}
-\item Graphs of 8 vertices are a bit more versatile in the way they can be set-up. We have limited ourselves to 7 different set-ups.
-\begin{itemize}
-\item As with graphs of 4 vertices, the first three test cases are set up to be the same.
-\item A graph with several branching paths and no cycles
-\item A graph containing one cycle and several branching paths.
-\item A graph in the shape of a kite. Four of the vertices are all connected to one another and the other four vertices form a straight line attached to the first set of vertices.
-\item Similar to the previous graph, with the difference that one of the edges within the first set of four vertices is left out.
-\end{itemize}
-\item Graphs of 16 nodes open up many different possible layouts of graphs but we have limited ourselves to 6 different set-ups.
-\begin{itemize}
-\item Once again, the first three graphs are the same as in the other two sizes.
-\item As with 8 nodes, we have also added a graph that has several branching paths and contains no cycles.
-\item A graph with many cycles that all have one vertex in common.
-\item A graph with many cycles and branching paths
-\end{itemize}
-\end{itemize}
-Other than these self-generated test data, we have also decided to use graphs from an internet database. These we could not describe here since they are fairly large and would take too much time for us to sift through it all. The database can be found here\cite{Database}.
+\subsection{Test-data}
+We have generated our own graphs as input-data with sizes 4, 8 and 16 vertices and with several different set-ups of edges. Each of these graphs are two-dimensional and undirected. We have also decided to use graphs from an internet database. These we could not describe here since they are fairly large and would take too much time for us to sift through it all. The database can be found here\cite{Database}.
 \subsection{Output data}
 As output data, we get optimised graphs of course, but in order to answer our subquestions, we wanted more than just that. As such, we have added in a Stopwatch in order to measure the runtime. Since the stopwatch class in C\# is dependent on the pc that it is run on, we can never truly be exact. Thus we execute the program on a given graph several times and take the average time based on the results.Furthermore, we take into consideration the average edge-length and the number of iterations until stabilization.
 
-\section{Results}\label{s:results}
-
-\subsection{Hypotheses}
-We have devised several hypotheses based on our subquestions mentioned in section \ref{s:question}. The first two hypotheses are based on the runtime of the algorithm. How does it scale up to today's standards? They are as follows.
+\section{The final results}\label{s:results}
+Our results were interesting and proved some of our hypotheses right while proving others wrong. We continuously used 5 tests per different variable setting.
 \begin{itemize}
-\item The runtime of the algorithm increases linearly as the number of iterations increases. This implies that each iteration computes in roughly the same amount of time.
-\item The runtime of the algorithm increases quadratically as the number of input vertices increases.
+\item We hypothesised that the runtime of the algorithm increases linearly as the number of iterations increases. This implies that each iteration computes in roughly the same amount of time.
+\item We hypothesises that the runtime of the algorithm increases quadratically as the number of input vertices increases.
+\item We hypothesised that the average edge-length decreases linearly as we decrease the value of $c_1$. This was proven wrong however. We found that the mean increased and we calculated the correlation to be $r=-0.73278$ which is a fairly strong negative correlation. As we can see in figure \ref{fig:graphc1}, this increase does not appear to be linear.
+\begin{figure}[h]
+	\centering
+	\includegraphics[height=4cm]{Edgemeanvsc1}
+	\label{fig:graphc1}
+\end{figure}
+The resulting graphs became smaller and smaller and as such, became increasingly harder to read. It is also important to note that the standard deviation of the edge-lengths increased as $c_1$ decreased.
+\item We hypothesised that the average edge-length increases linearly as we increase the value of $c_3$. The results seem to conform to this. The mean increased and we found the correlation to be $r=0.97092$ which is a very strong positive correlation. As we can see in figure \ref{fig:graphc3}, this increase looks like it forms a nice line with some odd values near the end that we could not explain.
+\begin{figure}[h]
+	\centering
+	\includegraphics[height=4cm]{Edgemeanvsc3}
+	\label{fig:graphc3}
+\end{figure}
+The resulting graphs became bigger and bigger and as such they became hard to read and put into one image. The standard deviation increased as well.
 \end{itemize}
-The last two hypotheses are based on the four constants in the algorithm. We've decided to only look at $c_1$ and $c_3$ since these two influence the most important aspects of the algorithm, namely the calculation of the two different forces. Our hypotheses are as follows.
-\begin{itemize}
-\item The average edge-length decreases linearly as we decrease the value of $c_1$.
-\item The average edge-length increases linearly as we increase the value of $c_3$.
-\end{itemize}
-
 
 \section{Discussion and conclusion}
 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
