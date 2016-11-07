@@ -99,7 +99,19 @@ namespace GraphVisualizer
         /// </summary>
         private static results runner(string inputFile, string outputFile, float spring_multiplier, float spring_neutral_distance, float repellant_multiplier, float dampening, int max_iterations, bool stabilise)
         {
-            IInputLoader l = new TestInput();
+            IInputLoader l;
+            var ext = new System.IO.FileInfo(inputFile).Extension;
+            if (ext.Equals(".txt"))
+            {
+                l = new TestInput();
+            } else if (ext.Equals(".col"))
+            {
+                l = new GeneratedSampleInput();
+            } else
+            {
+                l = new TestInput();
+                Console.Error.WriteLine("Warning: could not determine input type for extension {0}", ext);
+            }
             Graph g = l.load(inputFile);
 
             float stabilizationThreshold = 0.001f;
@@ -156,7 +168,7 @@ namespace GraphVisualizer
         {
             var dir = new System.IO.DirectoryInfo("../../../data");
             var names = new List<String>();
-            foreach (var fi in dir.GetFiles("*.txt"))
+            foreach (var fi in dir.GetFiles("*.txt").Concat(dir.GetFiles("*.col")).OrderBy((x) => (x.Length)))
                 names.Add(fi.FullName);
 
             return names.ToArray();
@@ -194,9 +206,10 @@ namespace GraphVisualizer
                 // Multiple runs
                 for (var i = 0; i < RunsPerTest; i++)
                 {
+                    Console.Write("RuntimeVsVertices: {0}({1}) Vertices:         \r", filename, i);
                     var results = runner(filename, null, spring_multiplier, spring_neutral_distance, spring_multiplier, dampening, MaxIterationsPerTest, true);
                     outputStream.WriteLine(PrintCSV(new String[] { "" + results.graph.nodes.Count, "" + results.runtime }));
-                    Console.Write("RuntimeVsVertices: {0}({1}) Vertices: {2}\r", filename, i, results.graph.nodes.Count);
+                    Console.Write("RuntimeVsVertices: {0}({1}) Vertices: {2}, Time: {3}ms\n", filename, i, results.graph.nodes.Count, results.runtime);
                 }
             }
             outputStream.Close();

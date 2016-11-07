@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FruchtermanReingoldAlgorithm.cs" />
+    <Compile Include="GeneratedSampleInput.cs" />
     <Compile Include="GraphStatistics.cs" />
     <Compile Include="TestInput.cs" />
     <Compile Include="ASInput.cs" />
