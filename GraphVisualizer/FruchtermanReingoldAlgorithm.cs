@@ -37,6 +37,8 @@ namespace GraphVisualizer
 
         protected float frameSize;
 
+        protected float initialHeat;
+
         public FruchtermanReingoldAlgorithm(float spring_multiplier, float C, float repellant_multiplier, int M, float stabilizationThreshold, bool useStabilizer)
         {
             this.spring_multiplier = spring_multiplier;
@@ -46,7 +48,8 @@ namespace GraphVisualizer
             this.stabilizationThreshold = stabilizationThreshold;
             this.UseStabiliser = useStabilizer;
             this.frameSize = 25.0f;
-            this.heat = this.frameSize * 0.1f;
+            this.initialHeat = this.frameSize * 0.1f;
+            this.heat = this.initialHeat;
         }
 
         protected float springStrength(float length)
@@ -115,13 +118,13 @@ namespace GraphVisualizer
                 // limit the final force
                 if (sum.Length() > heat)
                 {
-                    sum *= heat / sum.Length();
+                    sum = Vector2.Normalize(sum) * heat;
                 }
                 node_forces[i] = sum;
             }
 
             // reduce the heat
-            heat -= (1.0F / M);
+            heat -= (this.initialHeat / M);
 
             // Squared because we only need one square root at the end this way, making the calculations faster
             double totalForceLengthSquared = 0d;
