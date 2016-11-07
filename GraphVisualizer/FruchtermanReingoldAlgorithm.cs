@@ -125,7 +125,6 @@ namespace GraphVisualizer
 
             // reduce the heat
             heat -= (this.initialHeat / M);
-            Console.WriteLine("Heat: " + heat.ToString());
 
             // Squared because we only need one square root at the end this way, making the calculations faster
             double totalForceLengthSquared = 0d;
