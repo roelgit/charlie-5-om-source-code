@@ -40,10 +40,12 @@ namespace GraphVisualizer
             switch (testcase)
             {
                 case 1:
-                    RuntimeVsVertices();
+                    EadesFRRuntimeVsVertices();
+                    //RuntimeVsVertices();
                     break;
                 case 2:
-                    RuntimeVsIterations();
+                    EadesFRRuntimeVsIterations();
+                    //RuntimeVsIterations();
                     break;
                 case 3:
                     EdgeLengthVsC1();
@@ -99,26 +101,34 @@ namespace GraphVisualizer
         /// </summary>
         private static results runner(string inputFile, string outputFile, float spring_multiplier, float spring_neutral_distance, float repellant_multiplier, float dampening, int max_iterations, bool stabilise)
         {
-            IInputLoader l;
-            var ext = new System.IO.FileInfo(inputFile).Extension;
-            if (ext.Equals(".txt"))
-            {
-                l = new TestInput();
-            } else if (ext.Equals(".col"))
-            {
-                l = new GeneratedSampleInput();
-            } else
-            {
-                l = new TestInput();
-                Console.Error.WriteLine("Warning: could not determine input type for extension {0}", ext);
-            }
-            Graph g = l.load(inputFile);
+            Graph g = loadGraph(inputFile);
 
             float stabilizationThreshold = 0.001f;
 
             Algorithm a = new FruchtermanReingoldAlgorithm(spring_multiplier, spring_neutral_distance, repellant_multiplier, max_iterations, stabilizationThreshold, stabilise);
 
             return runner(g, outputFile, a);
+        }
+
+        private static Graph loadGraph(string inputFile)
+        {
+            IInputLoader l;
+            var ext = new System.IO.FileInfo(inputFile).Extension;
+            if (ext.Equals(".txt"))
+            {
+                l = new TestInput();
+            }
+            else if (ext.Equals(".col"))
+            {
+                l = new GeneratedSampleInput();
+            }
+            else
+            {
+                l = new TestInput();
+                Console.Error.WriteLine("Warning: could not determine input type for extension {0}", ext);
+            }
+            Graph g = l.load(inputFile);
+            return g;
         }
 
         private static results runner(Graph g, string outputFile, Algorithm a)
@@ -289,6 +299,67 @@ namespace GraphVisualizer
                     outputStream.WriteLine(PrintCSV(new String[] { "" + resultsEades.iterations, "" + resultsFR.iterations }));
                     outputStream.Flush();
                     Console.Write("EadesVsFruchtmanReingold: {0}({1})\r", filename, i);
+                }
+            }
+            outputStream.Close();
+        }
+
+        private static void EadesFRRuntimeVsIterations(int MAX_ITERATIONS = 40000)
+        {
+            float spring_multiplier = 1.0f; float spring_neutral_distance = 1.0f; float repellant_multiplier = 1.0f; float dampening = 1.0f; float C = 1f;
+            foreach (var filename in TestFilePaths())
+            {
+                var outputStream = new System.IO.StreamWriter(new System.IO.FileInfo("EadesVsFRRuntime" + new System.IO.FileInfo(filename).Name + ".csv").OpenWrite());
+                outputStream.WriteLine(PrintCSV(new String[] { "Iterations", "Runtime" }));
+
+                var deltaI = 500;
+
+                for (int iteration = deltaI; iteration < MAX_ITERATIONS; iteration += deltaI)
+                {
+                    //Multiple runs
+                    for (var i = 0; i < RunsPerTest; i++)
+                    {
+                        var fruchmanReingold = new FruchtermanReingoldAlgorithm(spring_multiplier, C, repellant_multiplier, iteration, 0f, false);
+                        var eades = new EadesAlgorithm(spring_multiplier, spring_neutral_distance, repellant_multiplier, dampening, iteration, 0f, false);
+                        Graph g = loadGraph(filename);
+                        var f_results = runner(loadGraph(filename), null, fruchmanReingold);
+                        var e_results = runner(loadGraph(filename), null, eades);
+                        if (f_results.iterations != e_results.iterations)
+                        {
+                            throw new Exception("should never happen");
+                        }
+                        outputStream.WriteLine(PrintCSV(new String[] { "" + f_results.iterations, "" + f_results.runtime, "" + e_results.runtime }));
+                        outputStream.Flush();
+                        Console.Write("RuntimeVsIterations: {0}({1}) Iterations: {2}\r", filename, i, f_results.iterations);
+                    }
+                }
+                outputStream.Close();
+            }
+        }
+
+        private static void EadesFRRuntimeVsVertices()
+        {
+            int max_iterations = 150;
+            float spring_multiplier = 1.0f; float spring_neutral_distance = 1.0f; float repellant_multiplier = 1.0f; float dampening = 1.0f; float C = 1f;
+            var outputStream = new System.IO.StreamWriter(new System.IO.FileInfo("RuntimeVsVertices.csv").OpenWrite());
+            outputStream.WriteLine(PrintCSV(new String[] { "Vertices", "Runtime" }));
+            foreach (var filename in TestFilePaths())
+            {
+                // Multiple runs
+                for (var i = 0; i < RunsPerTest; i++)
+                {
+                    Console.Write("RuntimeVsVertices: {0}({1}) Vertices:         \r", filename, i);
+                    var fruchmanReingold = new FruchtermanReingoldAlgorithm(spring_multiplier, C, repellant_multiplier, max_iterations, 0f, false);
+                    var eades = new EadesAlgorithm(spring_multiplier, spring_neutral_distance, repellant_multiplier, dampening, max_iterations, 0f, false);
+                    Graph g = loadGraph(filename);
+                    var f_results = runner(loadGraph(filename), null, fruchmanReingold);
+                    var e_results = runner(loadGraph(filename), null, eades);
+                    if (f_results.iterations != e_results.iterations)
+                    {
+                        throw new Exception("should never happen");
+                    } outputStream.WriteLine(PrintCSV(new String[] { "" + f_results.graph.nodes.Count, "" + f_results.runtime, "" + e_results.runtime }));
+                    outputStream.Flush();
+                    Console.Write("RuntimeVsVertices: {0}({1}) Vertices: {2}, Time: {3}ms/{4}ms\n", filename, i, f_results.graph.nodes.Count, f_results.runtime, e_results.runtime);
                 }
             }
             outputStream.Close();
